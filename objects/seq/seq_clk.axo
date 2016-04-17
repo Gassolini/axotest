@@ -1,0 +1,155 @@
+<objdefs appVersion="1.0.9">
+  <obj.normal id="seq_clk" uuid="de6909eb611b13af5b43f97484c130024b3a4793">
+    <sDescription>Sequencer clock</sDescription>
+    <author>Are LEistad</author>
+    <license>BSD</license>
+    <helpPatch>lfo.axh</helpPatch>
+    <inlets>
+      <frac32.bipolar  name="freq"       description="Clock frequency mod"/>
+      <frac32.bipolar  name="gatelength" description="Gate length mod"/>
+      <bool32          name="run"        description="Enable playing"/>
+      <bool32          name="reverse"    description="Play backwards"/>
+      <bool32.rising   name="reset"      description="Reset counter"/>
+    </inlets>
+    <outlets>
+      <int32  name="step"   description="Step number out"/>
+      <bool32 name="clock"  description="Clock out"/>
+      <frac32 name="phasor" description="Phasor output"/>
+    </outlets>
+    <displays/>
+    <params>
+      <frac32.s.map.lfopitch name="freq"       description="Clock frequency modulation"/>
+      <frac32.u.map.ratio    name="gatelength" description="Gate length"/>
+      <int32 name="seqlength" noLabel="true">
+         <MinValue i="1"/>
+         <MaxValue i="16"/>
+      </int32>
+    </params>
+    <attribs>
+      <combo name="resetmode">
+         <MenuEntries>
+            <string>Sync</string>
+            <string>Immediate</string>
+         </MenuEntries>
+         <CEntries>
+            <string>0</string>
+            <string>1</string>
+         </CEntries>
+      </combo>
+    </attribs>
+    <code.declaration><![CDATA[
+      enum
+      {
+        SEQ_CLK_RESET_MODE_sync      = 0,
+        SEQ_CLK_RESET_MODE_immediate = 1
+      } SEQ_CLK_RESET_MODE;
+
+      uint32_t  phase;
+      uint32_t  old_phase;
+      uint32_t  old_reset;
+      uint32_t  reset_pending;
+      uint32_t  supress_trig;    // Avoid new gate on currentstep for stop -> run
+      int       count;
+      int       old_count;
+
+    ]]></code.declaration>
+    <code.init><![CDATA[
+
+      phase         = 0;
+      old_phase     = 0;
+      old_reset     = 0;
+      reset_pending = 0;
+      supress_trig  = 0;
+      count         = 0;
+      old_count     = 0;
+
+    ]]></code.init>
+    <code.krate><![CDATA[
+
+      int32_t freq;
+      int32_t gatelength;
+
+      // Catch counter reset requests
+      if( inlet_reset > 0 && old_reset == 0 )
+        {
+          reset_pending = 1;
+        }
+      old_reset = inlet_reset;
+
+      if( inlet_run )
+        {
+          MTOFEXTENDED( param_freq + inlet_freq ,freq );
+          phase += freq>>2;
+
+          // Counter
+          if( phase < old_phase /*&& inlet_run*/ )
+            {
+              if( inlet_reverse != 0 )
+                {
+                  count--;
+                  if( count < 0 )
+                    count = param_seqlength - 1;
+                }
+              else
+                {
+                  count++;
+                  if( count >= param_seqlength )
+                    count = 0;
+                }
+            }
+
+          // Handle counter reset, either immediate of synchronized to the clock
+          if( reset_pending == 1 )
+            {
+              if( attr_resetmode == SEQ_CLK_RESET_MODE_sync )
+                {
+                  if( phase < old_phase )
+                    {
+                      phase         = 0;
+                      reset_pending = 0;
+                      count         = 0;
+                    }
+                }
+              else // if( reset_mode == SEQ_CLK_RESET_MODE_immediate )
+                {
+                  phase         = 0;
+                  reset_pending = 0;
+                  count         = 0;
+                }
+            }
+
+          gatelength = param_gatelength + inlet_gatelength;
+          if( gatelength > (1<<27) )
+            gatelength  = (1<<27);
+          else if( gatelength < 0 )
+            gatelength  = 0;
+
+          if( supress_trig )
+            {
+              outlet_clock = 0;
+              if( count != old_count )
+                supress_trig = 0;
+            }
+          else
+            {
+              if( (phase>>5) > gatelength )
+                outlet_clock = 0;
+              else
+                outlet_clock = 1;
+            }
+
+          outlet_step  = count;
+          outlet_phasor= phase>>5;
+          old_count    = count;
+          old_phase    = phase;
+        }
+      else
+        {
+          outlet_clock = 0;
+          outlet_step  = count;
+          supress_trig = 1;
+        }
+
+    ]]></code.krate>
+  </obj.normal>
+</objdefs>
