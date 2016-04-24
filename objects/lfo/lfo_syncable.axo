@@ -24,9 +24,9 @@
          <MinValue i="1"/>
          <MaxValue i="48"/>
       </int32>
-      <bool32.tgl            name="miditrans" description="Obey MIDI transport messages"/>
-      <frac32.s.map.lfopitch name="freq"      description="Internal frequency"/>
-      <frac32.u.map.ratio    name="pw"        description="Pulse width"/>
+      <bool32.tgl            name="miditransport" description="Obey MIDI transport messages"/>
+      <frac32.s.map.lfopitch name="freq"          description="Internal frequency"/>
+      <frac32.u.map.ratio    name="pw"            description="Pulse width"/>
     </params>
     <attribs>
       <combo name="clocksource">
@@ -178,7 +178,7 @@
 
       // Need some variable copies to resolve scope...
       midi_clock_div = param_clockdiv;
-      midi_transport = param_miditrans;
+      midi_transport = param_miditransport;
 
       // 24 PPQ or MIDI sync input
       if( attr_clocksource == CLOCK_SOURCE_external )
@@ -263,13 +263,10 @@
               else if( status == MIDI_STOP )
                 {
                   midi_clock_run = 0;
-                  // doesn't stop, runs on the captured clock!!!
-                  // must actuallly stop...
                 }
               else if( status == MIDI_CONTINUE )
                 {
                   midi_clock_run = 1;
-                  // must actuallly restart...
                 }
               else if( status == MIDI_SONG_POSITION )
                 {

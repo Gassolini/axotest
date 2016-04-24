@@ -26,9 +26,9 @@
          <MinValue i="1"/>
          <MaxValue i="48"/>
       </int32>
-      <bool32.tgl            name="miditrans"   description="Obey MIDI transport messages"/>
-      <frac32.s.map.lfopitch name="tempo"       description="Clock frequency modulation"/>
-      <frac32.u.map.ratio    name="gatelength"  description="Gate length"/>
+      <bool32.tgl            name="miditransport" description="Obey MIDI transport messages"/>
+      <frac32.s.map.lfopitch name="tempo"         description="Clock frequency modulation"/>
+      <frac32.u.map.ratio    name="gatelength"    description="Gate length"/>
       <int32 name="seqlength" noLabel="false">
          <MinValue i="1"/>
          <MaxValue i="64"/>
@@ -202,7 +202,7 @@
 
       // Need some variable copies to resolve scope...
       midi_clock_div = param_clockdiv;
-      midi_transport = param_miditrans;
+      midi_transport = param_miditransport;
 
       // 24 PPQ or MIDI sync input
       if( attr_clocksource == CLOCK_SOURCE_external )
@@ -225,6 +225,8 @@
         }
 
       if( inlet_run )
+      //if(   inlet_run == 1 && attr_clocksource == CLOCK_SOURCE_internal)
+      //   ||  &&  midi_clock_run)
         {
           if( attr_clocksource == CLOCK_SOURCE_internal )
             {

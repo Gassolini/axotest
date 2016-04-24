@@ -16,8 +16,8 @@
         <MinValue i="1"/>
         <MaxValue i="48"/>
       </int32>
-      <bool32.tgl   name="miditrans" description="Obey MIDI transport messages"/>
-      <frac32.u.map name="time"      description="Internal delay time"/>
+      <bool32.tgl   name="miditransport" description="Obey MIDI transport messages"/>
+      <frac32.u.map name="time"          description="Internal delay time"/>
     </params>
     <attribs>
       <objref name="delayname"/>
@@ -137,7 +137,7 @@
 
       // Need some variable copies to resolve scope...
       midi_clock_div = param_clockdiv;
-      midi_transport = param_miditrans;
+      midi_transport = param_miditransport;
 
       // 24 PPQ or MIDI sync input
       if( attr_clocksource == CLOCK_SOURCE_external )
@@ -189,10 +189,13 @@
                 }
               else if( status == MIDI_STOP )
                 {
+                  // doesn't stop, runs on the captured clock!!!
+                  // must actuallly stop...
                   midi_clock_run = 0;
                 }
               else if( status == MIDI_CONTINUE )
                 {
+                  // must actuallly restart...
                   midi_clock_run = 1;
                 }
               else if( status == MIDI_SONG_POSITION )

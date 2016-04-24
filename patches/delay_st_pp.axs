@@ -234,6 +234,7 @@
       <net>
          <source obj="hp" outlet="out"/>
          <dest obj="hp_r" inlet="freq"/>
+         <dest obj="hp_l" inlet="freq"/>
       </net>
       <net>
          <source obj="in_r" outlet="inlet"/>
