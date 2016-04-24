@@ -204,7 +204,7 @@
       midi_clock_div = param_clockdiv;
       midi_transport = param_miditransport;
 
-      if( first_run == 1 && param_transport == 0 )
+      if( first_run == 1 && param_miditransport == 0 )
         {
           midi_clock_run = 0;
         }
