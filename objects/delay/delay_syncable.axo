@@ -189,13 +189,10 @@
                 }
               else if( status == MIDI_STOP )
                 {
-                  // doesn't stop, runs on the captured clock!!!
-                  // must actuallly stop...
                   midi_clock_run = 0;
                 }
               else if( status == MIDI_CONTINUE )
                 {
-                  // must actuallly restart...
                   midi_clock_run = 1;
                 }
               else if( status == MIDI_SONG_POSITION )
