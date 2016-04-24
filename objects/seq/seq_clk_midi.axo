@@ -207,14 +207,17 @@
       midi_transport = param_miditransport;
 
       // Prevent MIDI sync from starting without a MIDI start message
-      if( start_sequence == 0 && param_miditransport == 1 )
+      if( start_sequence == 0 )
         {
-          midi_clock_run = 0;
+          if( param_miditransport == 1 )
+            {
+              midi_clock_run = 0;
+            }
+          else
+            {
+              midi_clock_run = 1;
+            }
           start_sequence++;
-        }
-      else
-        {
-          midi_clock_run = 1;
         }
 
       // 24 PPQ or MIDI sync input
