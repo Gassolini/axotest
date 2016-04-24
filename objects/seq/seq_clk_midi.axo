@@ -86,6 +86,7 @@
         CLOCK_SOURCE_midi     = 2
       } CLOCK_SOURCE;
 
+      uint32_t  start_sequence;
       uint32_t  first_run;        // To catch first iteration for startup conditions
       uint32_t  ktimer;           // 3kHz timer
       uint32_t  phase;
@@ -185,6 +186,7 @@
       midi_clock_run   = 1;
       midi_clock_count = 0;
       midi_transport   = 0;
+      start_sequence   = 0;
 #ifdef USE_CLOCK_SMOOTHING
       midi_last_period = 0.0f;
 #endif
@@ -204,15 +206,16 @@
       midi_clock_div = param_clockdiv;
       midi_transport = param_miditransport;
 
-      if( first_run == 1 && param_miditransport == 1 )
+      // Prevent MIDI sync from starting without a MIDI start message
+      if( start_sequence == 0 && param_miditransport == 1 )
         {
           midi_clock_run = 0;
+          start_sequence++;
         }
       else
         {
           midi_clock_run = 1;
         }
-
 
       // 24 PPQ or MIDI sync input
       if( attr_clocksource == CLOCK_SOURCE_external )
