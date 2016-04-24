@@ -224,9 +224,10 @@
           reset_sync = 1;
         }
 
-      if( inlet_run )
-      //if(   inlet_run == 1 && attr_clocksource == CLOCK_SOURCE_internal)
-      //   ||  &&  midi_clock_run)
+      //if( inlet_run )
+      if(   (inlet_run == 1 && attr_clocksource == CLOCK_SOURCE_internal)
+         || (inlet_run == 1 && midi_clock_run == 1 )
+        )
         {
           if( attr_clocksource == CLOCK_SOURCE_internal )
             {
@@ -254,11 +255,12 @@
               outlet_start = 1;
               first_run    = 0;
             }
-          ///else if( phase < old_phase )
-          else if(    (attr_clocksource == CLOCK_SOURCE_internal && phase < old_phase)
-                   || (midi_clock_run   == 1                     && phase < old_phase)
-                 )
-
+          else if( phase < old_phase )
+          //else if(    phase < old_phase
+          //         && (    attr_clocksource == CLOCK_SOURCE_internal
+          //              || midi_clock_run == 1
+          //             )
+          //       )
             {
               // Clock! Update counter, taking any queued song position into account.
 
