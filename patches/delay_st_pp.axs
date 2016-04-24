@@ -83,7 +83,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="ctrl/dial p" uuid="cc5d2846c3d50e425f450c4b9851371b54f4d674" name="dial_1" x="294" y="252">
+   <obj type="ctrl/dial p" uuid="cc5d2846c3d50e425f450c4b9851371b54f4d674" name="lp" x="294" y="252">
       <params>
          <frac32.u.map name="value" onParent="true" value="64.0"/>
       </params>
@@ -227,7 +227,7 @@
    </obj>
    <nets>
       <net>
-         <source obj="dial_1" outlet="out"/>
+         <source obj="lp" outlet="out"/>
          <dest obj="lp_r" inlet="freq"/>
          <dest obj="lp_l" inlet="freq"/>
       </net>

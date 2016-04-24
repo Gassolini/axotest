@@ -15,14 +15,14 @@
    <comment type="patch/comment" x="952" y="56" text="Pattern switch synced to start"/>
    <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="run" x="28" y="84">
       <params>
-         <bool32.tgl name="b" value="1"/>
+         <bool32.tgl name="b" value="0"/>
       </params>
       <attribs/>
    </obj>
    <obj type="seq/seq_clk_midi" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_midi_1" x="140" y="84">
       <params>
          <int32 name="clockdiv" value="12"/>
-         <bool32.tgl name="miditrans" value="0"/>
+         <bool32.tgl name="miditransport" value="0"/>
          <frac32.s.map name="tempo" value="-10.0"/>
          <frac32.u.map name="gatelength" value="32.0"/>
          <int32 name="seqlength" value="4"/>
@@ -90,7 +90,7 @@
    <obj type="./delay_st_pp" uuid="a5a91366-fb17-46f4-a033-a8b5a206e87c" name="delay_st_pp_2" x="1246" y="84">
       <params>
          <bool32.tgl name="pre_filter" value="1"/>
-         <frac32.u.map name="dial_1" value="64.0"/>
+         <frac32.u.map name="lp" value="64.0"/>
          <frac32.u.map name="hp" value="0.0"/>
          <bool32.tgl name="hp_enable" value="0"/>
          <frac32.u.map name="ping" value="50.0"/>

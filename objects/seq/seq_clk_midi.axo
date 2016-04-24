@@ -254,7 +254,11 @@
               outlet_start = 1;
               first_run    = 0;
             }
-          else if( phase < old_phase )
+          ///else if( phase < old_phase )
+          else if(    (attr_clocksource == CLOCK_SOURCE_internal && phase < old_phase)
+                   || (midi_clock_run   == 1                     && phase < old_phase)
+                 )
+
             {
               // Clock! Update counter, taking any queued song position into account.
 
