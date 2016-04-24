@@ -104,17 +104,18 @@
                   step_count++;
                 }
 
-              if( step_count == 0 )
-                {
-                  outlet_start = 1;
-                }
-              else if( step_count < 0 )
+              if( step_count < 0 )
                 {
                   step_count = param_seqlength - 1;
                 }
               else if( step_count >= param_seqlength )
                 {
                   step_count = 0;
+                }
+
+              if( step_count == 0 )
+                {
+                  outlet_start = 1;
                 }
 
               outlet_clock = 1;

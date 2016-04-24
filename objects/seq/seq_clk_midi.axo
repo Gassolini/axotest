@@ -6,9 +6,10 @@
     <inlets>
       <frac32.bipolar  name="tempo"      description="Clock frequency mod"/>
       <frac32.bipolar  name="gatelength" description="Gate length mod"/>
-      <bool32          name="run"        description="Enable playing"/>
+      <bool32          name="run"        description="Run/stop"/>
+      <!-- bool32          name="runsync"    description="Run/stop synced to next clock"/ -->
       <bool32          name="reverse"    description="Play backwards"/>
-      <bool32.rising   name="rstsync"    description="Reset to step 0 on next clock"/>
+      <bool32.rising   name="rstsync"    description="Reset to step 0 synved to next clock"/>
       <bool32.rising   name="rstimm"     description="Reset to step 0 immediately"/>
       <bool32.rising   name="24ppq"      description="External 24 PPQ clock"/>
     </inlets>
@@ -83,8 +84,6 @@
         CLOCK_SOURCE_external = 1,
         CLOCK_SOURCE_midi     = 2
       } CLOCK_SOURCE;
-
-      ////uint32_t  got_sync;
 
       uint32_t  first_run;        // To catch first iteration for startup conditions
       uint32_t  ktimer;           // 3kHz timer
@@ -267,17 +266,18 @@
                   step_count++;
                 }
 
-              if( step_count == 0 )
-                {
-                  outlet_start = 1;
-                }
-              else if( step_count < 0 )
+              if( step_count < 0 )
                 {
                   step_count = param_seqlength - 1;
                 }
               else if( step_count >= param_seqlength )
                 {
                   step_count = 0;
+                }
+
+              if( step_count == 0 )
+                {
+                  outlet_start = 1;
                 }
 
               outlet_clock = 1;
