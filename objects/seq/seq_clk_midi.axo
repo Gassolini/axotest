@@ -26,6 +26,7 @@
          <MinValue i="1"/>
          <MaxValue i="48"/>
       </int32>
+      <bool32.tgl            name="miditrans"   description="Obey MIDI transport messages"/>
       <frac32.s.map.lfopitch name="tempo"       description="Clock frequency modulation"/>
       <frac32.u.map.ratio    name="gatelength"  description="Gate length"/>
       <int32 name="seqlength" noLabel="false">
@@ -105,6 +106,7 @@
       int32_t   midi_clock_div;
       int32_t   midi_clock_run;
       int32_t   midi_clock_count;
+      int32_t   midi_transport;
 #ifdef USE_CLOCK_SMOOTHING
       float     midi_last_period;
 #endif
@@ -182,6 +184,7 @@
       midi_clock_div   = 12;
       midi_clock_run   = 1;
       midi_clock_count = 0;
+      midi_transport   = 0;
 #ifdef USE_CLOCK_SMOOTHING
       midi_last_period = 0.0f;
 #endif
@@ -199,6 +202,7 @@
 
       // Need some variable copies to resolve scope...
       midi_clock_div = param_clockdiv;
+      midi_transport = param_miditrans;
 
       // 24 PPQ or MIDI sync input
       if( attr_clocksource == CLOCK_SOURCE_external )
@@ -379,30 +383,33 @@
             {
               on_24ppq_clock();
             }
-          else if( status == MIDI_START )
+          else if( midi_transport )
             {
-              midi_clock_run   = 1;
-              midi_clock_count = 0;
-              next_step_count  = 0;
-            }
-          else if( status == MIDI_STOP )
-            {
-              midi_clock_run = 0;
-            }
-          else if( status == MIDI_CONTINUE )
-            {
-              midi_clock_run = 1;
-            }
-          else if( status == MIDI_SONG_POSITION )
-            {
-              midi_clock_count = 0;
-              if( data1 == 0 && data2 == 0 )
+              if( status == MIDI_START )
                 {
+                  midi_clock_run   = 1;
+                  midi_clock_count = 0;
                   next_step_count  = 0;
                 }
-              else
+              else if( status == MIDI_STOP )
                 {
-                  next_step_count  = 6 * ( (data2<<7) + data1 );
+                  midi_clock_run = 0;
+                }
+              else if( status == MIDI_CONTINUE )
+                {
+                  midi_clock_run = 1;
+                }
+              else if( status == MIDI_SONG_POSITION )
+                {
+                  midi_clock_count = 0;
+                  if( data1 == 0 && data2 == 0 )
+                    {
+                      next_step_count  = 0;
+                    }
+                  else
+                    {
+                      next_step_count  = 6 * ( (data2<<7) + data1 );
+                    }
                 }
             }
         }

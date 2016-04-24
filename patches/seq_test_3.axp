@@ -22,12 +22,14 @@
    <obj type="seq/seq_clk_midi" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_midi_1" x="140" y="84">
       <params>
          <int32 name="clockdiv" value="12"/>
+         <bool32.tgl name="miditrans" value="0"/>
          <frac32.s.map name="tempo" value="-10.0"/>
          <frac32.u.map name="gatelength" value="32.0"/>
          <int32 name="seqlength" value="4"/>
       </params>
       <attribs>
          <combo attributeName="clocksource" selection="Internal"/>
+         <combo attributeName="device" selection="omni"/>
       </attribs>
    </obj>
    <obj type="drj/seq/stepseq_4_b" uuid="118548e73bc123fd356ff0c14bff9cff999947ac" name="pattern 1 gate" x="308" y="84">
@@ -99,7 +101,15 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="audio/out stereo" uuid="a1ca7a567f535acc21055669829101d3ee7f0189" name="out_1" x="1372" y="84">
+   <obj type="gain/vca" uuid="a9f2dcd18043e2f47364e45cb8814f63c2a37c0d" name="vca_1" x="1358" y="84">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="audio/out stereo" uuid="a1ca7a567f535acc21055669829101d3ee7f0189" name="out_1" x="1428" y="84">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="gain/vca" uuid="a9f2dcd18043e2f47364e45cb8814f63c2a37c0d" name="vca_2" x="1358" y="140">
       <params/>
       <attribs/>
    </obj>
@@ -111,6 +121,12 @@
    </obj>
    <obj type="mux/mux 2" uuid="e1c92bc92f4d191bfadf0efeae4503b458a4e440" name="mux_2" x="994" y="168">
       <params/>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/dial p" uuid="cc5d2846c3d50e425f450c4b9851371b54f4d674" name="dial_1" x="1358" y="210">
+      <params>
+         <frac32.u.map name="value" value="33.0"/>
+      </params>
       <attribs/>
    </obj>
    <obj type="ctrl/button" uuid="ef3d13774349df85aa9bfecf30dbc91ab8488b3f" name="reset:_sync" x="28" y="224">
@@ -175,11 +191,23 @@
    </obj>
    <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="Pattern" x="28" y="364">
       <params>
-         <bool32.tgl name="b" value="0"/>
+         <bool32.tgl name="b" value="1"/>
       </params>
       <attribs/>
    </obj>
    <obj type="mux/mux 2" uuid="3bcb8a666381ed18b8962eda50b1aa679136f618" name="mux_4" x="140" y="406">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="midi/in/keyb" uuid="53b04874696932f38aceaa168bd5d9efb743716d" name="keyb_1" x="728" y="574">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_2" x="868" y="574">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_1" x="980" y="574">
       <params/>
       <attribs/>
    </obj>
@@ -232,14 +260,6 @@
          <dest obj="delay_st_pp_2" inlet="in_r"/>
       </net>
       <net>
-         <source obj="delay_st_pp_2" outlet="out_l"/>
-         <dest obj="out_1" inlet="left"/>
-      </net>
-      <net>
-         <source obj="delay_st_pp_2" outlet="out_r"/>
-         <dest obj="out_1" inlet="right"/>
-      </net>
-      <net>
          <source obj="+1_1" outlet="result"/>
          <dest obj="i_1" inlet="in"/>
       </net>
@@ -254,10 +274,6 @@
       <net>
          <source obj="pattern 2 velocity" outlet="out"/>
          <dest obj="pattern 2 enable" inlet="sig2"/>
-      </net>
-      <net>
-         <source obj="mux_1" outlet="o"/>
-         <dest obj="simple_syn_2" inlet="pitch"/>
       </net>
       <net>
          <source obj="mux_3" outlet="o"/>
@@ -317,6 +333,43 @@
       <net>
          <source obj="Pattern" outlet="o"/>
          <dest obj="latch_1" inlet="i"/>
+      </net>
+      <net>
+         <source obj="mux_1" outlet="o"/>
+         <dest obj="+_1" inlet="in2"/>
+      </net>
+      <net>
+         <source obj="+_1" outlet="out"/>
+         <dest obj="simple_syn_2" inlet="pitch"/>
+      </net>
+      <net>
+         <source obj="+_2" outlet="out"/>
+         <dest obj="+_1" inlet="in1"/>
+      </net>
+      <net>
+         <source obj="keyb_1" outlet="note"/>
+         <dest obj="+_2" inlet="in1"/>
+      </net>
+      <net>
+         <source obj="delay_st_pp_2" outlet="out_l"/>
+         <dest obj="vca_1" inlet="a"/>
+      </net>
+      <net>
+         <source obj="vca_1" outlet="o"/>
+         <dest obj="out_1" inlet="left"/>
+      </net>
+      <net>
+         <source obj="delay_st_pp_2" outlet="out_r"/>
+         <dest obj="vca_2" inlet="a"/>
+      </net>
+      <net>
+         <source obj="vca_2" outlet="o"/>
+         <dest obj="out_1" inlet="right"/>
+      </net>
+      <net>
+         <source obj="dial_1" outlet="out"/>
+         <dest obj="vca_1" inlet="v"/>
+         <dest obj="vca_2" inlet="v"/>
       </net>
    </nets>
    <settings>
