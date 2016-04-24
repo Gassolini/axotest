@@ -1,0 +1,158 @@
+Coockbook EQ
+-------------
+
+
+Then compute a few intermediate variables:
+
+    A  = sqrt( 10^(dBgain/20) )
+       =       10^(dBgain/40)     (for peaking and shelving EQ filters only)
+
+    w0 = 2*pi*f0/Fs
+
+    cos(w0)
+    sin(w0)
+
+    alpha = sin(w0)/(2*Q)                                       (case: Q)
+          = sin(w0)*sinh( ln(2)/2 * BW * w0/sin(w0) )           (case: BW)
+          = sin(w0)/2 * sqrt( (A + 1/A)*(1/S - 1) + 2 )         (case: S)
+
+        FYI: The relationship between bandwidth and Q is
+             1/Q = 2*sinh(ln(2)/2*BW*w0/sin(w0))     (digital filter w BLT)
+        or   1/Q = 2*sinh(ln(2)/2*BW)             (analog filter prototype)
+
+        The relationship between shelf slope and Q is
+             1/Q = sqrt((A + 1/A)*(1/S - 1) + 2)
+
+    2*sqrt(A)*alpha  =  sin(w0) * sqrt( (A^2 + 1)*(1/S - 1) + 2*A )
+        is a handy intermediate variable for shelving EQ filters.
+
+
+
+f_filter_biquad_A
+----------------------
+LPF:        H(s) = 1 / (s^2 + s/Q + 1)
+
+            b0 =  (1 - cos(w0))/2
+            b1 =   1 - cos(w0)
+            b2 =  (1 - cos(w0))/2
+            a0 =   1 + alpha
+            a1 =  -2*cos(w0)
+            a2 =   1 - alpha
+
+
+  if (filter_W0 > (INT32_MAX / 4))
+    filter_W0 = INT32_MAX / 4;
+
+  int32_t sinW0;
+  int32_t cosW0;
+  int a = filter_W0;
+  int b = filter_W0 + (1 << 30);
+  SINE2TINTERP(a, sinW0)
+  SINE2TINTERP(b, cosW0)
+  int32_t alpha       = ___SMMUL(sinW0, q_inv);                                         // alpha = sin(w0)/(2*Q)
+
+  float filter_a0     = (HALFQ31 + alpha);                                              // 1 + alpha
+  float filter_a0_inv = ((INT32_MAX >> 2) / filter_a0);
+  int32_t a0_inv_q31  = (int32_t)(INT32_MAX * filter_a0_inv);
+  int32_t filter_a1   = ___SMMUL(-(-cosW0),          a0_inv_q31); // negated            // a1 =  -2*cos(w0)       / a0
+  int32_t filter_a2   = ___SMMUL(-(HALFQ31 - alpha), a0_inv_q31); // negated            // a2 =   1 - alpha       / a0
+
+  int32_t filter_b0   = ___SMMUL(HALFQ31 - (cosW0 >> 1), a0_inv_q31);                   // b0 =  (1 - cos(w0))/2  / a0
+  int32_t filter_b1   = (filter_b0 >> 1);                                               // b1 =   1 - cos(w0)     / a0
+                                                                                        // b2 =  (1 - cos(w0))/2  / a0
+
+biquad_lp_coefs
+--------------------
+LPF:        H(s) = 1 / (s^2 + s/Q + 1)
+
+            b0 =  (1 - cos(w0))/2
+            b1 =   1 - cos(w0)
+            b2 =  (1 - cos(w0))/2
+            a0 =   1 + alpha
+            a1 =  -2*cos(w0)
+            a2 =   1 - alpha
+
+
+  filter_W0 = filter_W0 >> 1;
+  if (filter_W0 > (INT32_MAX / 4))
+    filter_W0 = INT32_MAX / 4;
+
+  int32_t sinW0       = arm_sin_q31(filter_W0);
+  int32_t cosW0       = arm_cos_q31(filter_W0);
+  int32_t alpha       = ___SMMUL(sinW0, q_inv);                                         // alpha = sin(w0)/(2*Q)
+
+  float filter_a0     = (HALFQ31 + alpha);                                              // a0 =   1 + alpha
+  float filter_a0_inv = ((INT32_MAX >> 2) / filter_a0);
+  int32_t a0_inv_q31  = (int32_t)(INT32_MAX * filter_a0_inv);
+  coefs->cyn_1        = ___SMMUL((-cosW0),          a0_inv_q31);                        // a1 =  -2*cos(w0)        / a0
+  coefs->cyn_2        = ___SMMUL((HALFQ31 - alpha), a0_inv_q31);                        // a2 =   1 - alpha        / a0
+
+  coefs->cxn_0        = ___SMMUL(___SMMUL(HALFQ31 - (cosW0 >> 1), a0_inv_q31), q_inv);  // b0 =  (1 - cos(w0))/2   / a0  !!! * q_inv !!!
+  coefs->cxn_1        = coefs->cxn_0 << 1;                                              // b1 =   1 - cos(w0)      / a0
+  coefs->cxn_2        = coefs->cxn_0;                                                   // b2 =  (1 - cos(w0))/2   / a0
+
+
+
+biquad_bp_coefs
+--------------------
+BPF:        H(s) = (s/Q) / (s^2 + s/Q + 1)      (constant 0 dB peak gain)
+
+            b0 =   alpha
+            b1 =   0
+            b2 =  -alpha
+            a0 =   1 + alpha
+            a1 =  -2*cos(w0)
+            a2 =   1 - alpha
+
+//  (constant 0 dB peak gain)
+  filter_W0 = filter_W0 >> 1;
+  if (filter_W0 > (INT32_MAX / 4))
+    filter_W0 = INT32_MAX / 4;
+
+  int32_t sinW0       = arm_sin_q31(filter_W0);
+  int32_t cosW0       = arm_cos_q31(filter_W0);
+  int32_t alpha       = ___SMMUL(sinW0, q_inv);                                         // alpha = sin(w0)/(2*Q)
+
+  float filter_a0     = (HALFQ31 + alpha);                                              // a0 =   1 + alpha
+  float filter_a0_inv = ((INT32_MAX >> 2) / filter_a0);
+  int32_t a0_inv_q31  = (int32_t)(INT32_MAX * filter_a0_inv);
+  coefs->cyn_1        = ___SMMUL((-cosW0),          a0_inv_q31);                        // a1 =  -2*cos(w0)    / a0
+  coefs->cyn_2        = ___SMMUL((HALFQ31 - alpha), a0_inv_q31);                        // a2 =   1 - alpha    / a0
+
+  coefs->cxn_0        = ___SMMUL(alpha,             a0_inv_q31);                        // b0 =   alpha        / a0
+  coefs->cxn_1        = 0;                                                              // b1 =   0            / a0
+  coefs->cxn_2        = -coefs->cxn_0;                                                  // -alpha              / a0
+
+
+
+biquad_hp_coefs
+--------------------
+HPF:        H(s) = s^2 / (s^2 + s/Q + 1)
+
+            b0 =  (1 + cos(w0))/2
+            b1 = -(1 + cos(w0))
+            b2 =  (1 + cos(w0))/2
+            a0 =   1 + alpha
+            a1 =  -2*cos(w0)
+            a2 =   1 - alpha
+
+
+  filter_W0 = filter_W0 >> 1;
+  if (filter_W0 > (INT32_MAX / 4))
+    filter_W0 = INT32_MAX / 4;
+//    filter_W0 = filter_W0<<2;
+
+  int32_t sinW0 = arm_sin_q31(filter_W0);
+  int32_t cosW0 = arm_cos_q31(filter_W0);
+  int32_t alpha = ___SMMUL(sinW0, q_inv);
+
+  float filter_a0 = (HALFQ31 + alpha);                                                  // a0 =   1 + alpha
+  float filter_a0_inv = ((INT32_MAX >> 2) / filter_a0);
+  int32_t a0_inv_q31 = (int32_t)(INT32_MAX * filter_a0_inv);
+  coefs->cyn_1 = ___SMMUL((-cosW0),          a0_inv_q31);                               // a1 =  -2*cos(w0)       / a0
+  coefs->cyn_2 = ___SMMUL((HALFQ31 - alpha), a0_inv_q31);                               // a2 =   1 - alpha       / a0
+
+  coefs->cxn_0 = ___SMMUL(___SMMUL(HALFQ31 + (cosW0 >> 1), a0_inv_q31), q_inv);         // b0 =  (1 + cos(w0))/2  / a0  !!! * q_inv !!!
+  coefs->cxn_1 = -(coefs->cxn_0 << 1);                                                  // b1 = -(1 + cos(w0))    / a0
+  coefs->cxn_2 = coefs->cxn_0;                                                          // b2 =  (1 + cos(w0))/2  / a0
+

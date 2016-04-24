@@ -1,0 +1,54 @@
+<patch-1.0 appVersion="1.0.9">
+   <comment type="patch/comment" x="196" y="14" text="Chainable sequencer modeules in 4, 8 and 18 steps"/>
+   <comment type="patch/comment" x="42" y="42" text="PItch sequncer"/>
+   <comment type="patch/comment" x="196" y="42" text="Unipolar valu0e sequncer"/>
+   <comment type="patch/comment" x="336" y="42" text="Bipolar value sequncer"/>
+   <comment type="patch/comment" x="476" y="42" text="Step enable sequencer"/>
+   <obj type="drj/seq/stepseq_4_pitch" uuid="aa0848ea71ef03f595a32f0c14bff9cab097294701" name="stepseq_4_pitch_1" x="42" y="70">
+      <params>
+         <frac32.s.map name="p1" value="0.0"/>
+         <frac32.s.map name="p2" value="0.0"/>
+         <frac32.s.map name="p3" value="0.0"/>
+         <frac32.s.map name="p4" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_4_u" uuid="7aa423ea71e103abc56210c14bff9c17972947ac" name="stepseq_4_u_1" x="196" y="70">
+      <params>
+         <frac32.u.map name="v1" value="0.0"/>
+         <frac32.u.map name="v2" value="0.0"/>
+         <frac32.u.map name="v3" value="0.0"/>
+         <frac32.u.map name="v4" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_4_b" uuid="118548e73bc123fd356ff0c14bff9cff999947ac" name="stepseq_4_b_1" x="336" y="70">
+      <params>
+         <frac32.s.map name="v1" value="0.0"/>
+         <frac32.s.map name="v2" value="0.0"/>
+         <frac32.s.map name="v3" value="0.0"/>
+         <frac32.s.map name="v4" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_4_switch" uuid="ae8548ea711213fd35e930c14bff9cffaa2947ac" name="stepseq_4_switch_1" x="476" y="70">
+      <params>
+         <bool32.tgl name="s1" value="0"/>
+         <bool32.tgl name="s2" value="0"/>
+         <bool32.tgl name="s3" value="0"/>
+         <bool32.tgl name="s4" value="0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <nets/>
+   <settings>
+      <subpatchmode>no</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+   <windowPos>
+      <x>222</x>
+      <y>105</y>
+      <width>748</width>
+      <height>691</height>
+   </windowPos>
+</patch-1.0>

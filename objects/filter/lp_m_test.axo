@@ -1,0 +1,139 @@
+<objdefs>
+   <obj.normal id="lp_m_test" uuid="1aa1bc51da4a9ed93429af711591f3d7b9f45f22">
+      <sDescription>2-pole resonant low-pass filter (biquad)</sDescription>
+      <author>Johannes Taelman</author>
+      <license>BSD</license>
+      <helpPatch>filter.axh</helpPatch>
+      <inlets>
+         <frac32buffer name="in" description="filter input"/>
+         <frac32 name="pitch" description="pitch"/>
+         <frac32 name="reso" description="filter resonance"/>
+      </inlets>
+      <outlets>
+         <frac32buffer name="out" description="filter output"/>
+         <frac32       name="freq" description="freq parameter"/>
+         <frac32       name="W0a" description="biquad half bw freq"/>
+         <frac32       name="W0b" description="biquad full bw freq"/>
+         <frac32       name="reso" description="biquad inv q"/>
+      </outlets>
+      <displays/>
+      <params>
+         <frac32.s.map.pitch name="pitch"/>
+         <frac32.u.map.filterq name="reso"/>
+      </params>
+      <attribs/>
+      <code.declaration><![CDATA[
+
+        biquad_state bs;
+        biquad_coefficients bc;
+
+        int32_t filter_W0a;
+        int32_t filter_W0b;
+        int32_t old_filter_W0;
+
+
+        void biquad_lp_coefs_zaq( biquad_coefficients *coefs, uint32_t filter_W0, uint32_t q_inv)
+        {
+          filter_W0 = filter_W0 >> 1;
+
+          filter_W0a = filter_W0;
+          filter_W0b = filter_W0;
+
+          if (filter_W0a > (INT32_MAX / 4))
+            filter_W0a = INT32_MAX / 4;
+
+          if (filter_W0b > INT32_MAX )
+            filter_W0b = INT32_MAX;
+
+          filter_W0 = filter_W0a;
+
+          int32_t sinW0 = arm_sin_q31(filter_W0);
+          int32_t cosW0 = arm_cos_q31(filter_W0);
+
+          //int32_t sinW0; // = arm_sin_q31(filter_W0);
+          //int32_t cosW0; // = arm_cos_q31(filter_W0);
+          //int a = filter_W0;
+          //int b = filter_W0 + (1 << 30);
+          //SINE2TINTERP(a, sinW0)
+          //SINE2TINTERP(b, cosW0)
+
+          int32_t alpha = ___SMMUL(sinW0, q_inv);                                           // alpha = sin(w0)/(2*Q)
+
+          float filter_a0 = (HALFQ31 + alpha);                                              // a0 =   1 + alpha
+          float filter_a0_inv = ((INT32_MAX >> 2) / filter_a0);
+          int32_t a0_inv_q31 = (int32_t)(INT32_MAX * filter_a0_inv);
+          coefs->cyn_1 = ___SMMUL((-cosW0), a0_inv_q31);                                    // a1 =  -2*cos(w0)        / a0
+          coefs->cyn_2 = ___SMMUL((HALFQ31 - alpha), a0_inv_q31);                           // a2 =   1 - alpha        / a0
+
+          coefs->cxn_0 = ___SMMUL(___SMMUL(HALFQ31 - (cosW0 >> 1), a0_inv_q31), q_inv);   // b0 =  (1 - cos(w0))/2   / a0  !!! * q_inv !!!
+          //coefs->cxn_0 = ___SMMUL(HALFQ31 - (cosW0 >> 1), a0_inv_q31);
+          coefs->cxn_1 = coefs->cxn_0 << 1;                                                 // b1 =   1 - cos(w0)      / a0
+          coefs->cxn_2 = coefs->cxn_0;                                                      // b2 =  (1 - cos(w0))/2   / a0
+
+
+          if( filter_W0 != old_filter_W0 )
+            {
+              LogTextMessage("\nbiquad_lp_coefs():" );
+              LogTextMessage("q_inv = 0x%08x", q_inv );
+              LogTextMessage("W0    = 0x%08x", filter_W0 );
+              LogTextMessage("sinW0 = 0x%08x", sinW0 );
+              LogTextMessage("cosW0 = 0x%08x", cosW0 );
+              LogTextMessage("alpha = 0x%08x", alpha );
+              LogTextMessage("a0    = 0x%08x", filter_a0 );
+              LogTextMessage("a1    = 0x%08x", coefs->cyn_1 );
+              LogTextMessage("a2    = 0x%08x", coefs->cyn_2 );
+              LogTextMessage("b0    = 0x%08x", coefs->cxn_0 );
+              LogTextMessage("b1    = 0x%08x", coefs->cxn_1 );
+              LogTextMessage("b2    = 0x%08x", coefs->cxn_2 );
+            }
+          old_filter_W0 = filter_W0;
+        };
+
+        void biquad_dsp_zaq(biquad_state *state, biquad_coefficients *coefs, const int32buffer inbuffer, int32buffer outbuffer) {
+          int32_t filter_x_n1 = state->filter_x_n1;
+          int32_t filter_x_n2 = state->filter_x_n2;
+          int32_t filter_y_n1 = state->filter_y_n1;
+          int32_t filter_y_n2 = state->filter_y_n2;
+          int i;
+          for (i = 0; i < BUFSIZE; i++) {
+            int32_t filterinput = inbuffer[i];
+            int32_t accu = ___SMMUL(coefs->cxn_0, filterinput);
+            accu = ___SMMLA(coefs->cxn_1, filter_x_n1, accu);
+            accu = ___SMMLA(coefs->cxn_2, filter_x_n2, accu);
+            accu = ___SMMLS(coefs->cyn_1, filter_y_n1, accu);
+            accu = ___SMMLS(coefs->cyn_2, filter_y_n2, accu);
+
+            int32_t filteroutput;
+            filteroutput = accu << 4;
+            filter_x_n2 = filter_x_n1;
+            filter_x_n1 = filterinput;
+            filter_y_n2 = filter_y_n1;
+            filter_y_n1 = filteroutput;
+            outbuffer[i] = __SSAT(filteroutput, 28);
+          }
+          state->filter_x_n1 = filter_x_n1;
+          state->filter_x_n2 = filter_x_n2;
+          state->filter_y_n1 = filter_y_n1;
+          state->filter_y_n2 = filter_y_n2;
+        };
+      ]]></code.declaration>
+      <code.init><![CDATA[
+        biquad_clearstate(&bs);
+      ]]></code.init>
+      <code.krate><![CDATA[
+
+        int32_t freq;
+        MTOF(param_pitch + inlet_pitch,freq);
+        biquad_lp_coefs_zaq(&bc,freq,INT_MAX - (__USAT(inlet_reso + param_reso,27)<<4));
+        biquad_dsp_zaq(&bs,&bc,inlet_in,outlet_out);
+
+
+        outlet_freq = freq;
+        outlet_W0a  = filter_W0a;
+        outlet_W0b  = filter_W0b;
+        outlet_reso = param_reso;
+
+
+    ]]></code.krate>
+  </obj.normal>
+</objdefs>
