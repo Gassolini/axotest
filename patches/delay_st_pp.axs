@@ -10,7 +10,7 @@
    </obj>
    <obj type="filter/lp1 m" uuid="18b561d14f9175f5380e6a1d9d55ca41e0e61974" name="lp_l" x="294" y="56">
       <params>
-         <frac32.u.map name="freq" value="0.0"/>
+         <frac32.u.map name="freq" value="30.0"/>
       </params>
       <attribs/>
    </obj>
@@ -167,7 +167,7 @@
    </obj>
    <obj type="filter/lp1 m" uuid="18b561d14f9175f5380e6a1d9d55ca41e0e61974" name="lp_r" x="294" y="434">
       <params>
-         <frac32.u.map name="freq" value="0.0"/>
+         <frac32.u.map name="freq" value="32.0"/>
       </params>
       <attribs/>
    </obj>

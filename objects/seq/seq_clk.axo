@@ -69,11 +69,11 @@
 
       // Catch counter reset requests, with immediate reset taking priority
 
-      if( inlet_rstimm > 0 && old_reset_imm == 0 )
+      if( inlet_rstimm && !old_reset_imm )
         {
           reset_imm = 1;
         }
-      else if( inlet_rstsync > 0 && old_reset_sync == 0 )
+      else if( inlet_rstsync && !old_reset_sync )
         {
           reset_sync = 1;
         }
@@ -94,7 +94,6 @@
           else if( phase < old_phase )
             {
               // Clock!
-
               if( inlet_reverse )
                 {
                   step_count--;
@@ -123,7 +122,7 @@
 
           // Handle sequencer reset, either immediate or synchronized to next step
 
-          if( reset_imm == 1 )
+          if( reset_imm )
             {
               phase         = 0;
               reset_imm     = 0;
@@ -131,7 +130,7 @@
               step_count    = 0;
               enforce_trig  = 1;
             }
-          else if( reset_sync == 1 )
+          else if( reset_sync )
             {
               if( phase < old_phase )
                 {

@@ -1,5 +1,5 @@
 <objdefs appVersion="1.0.9">
-  <obj.normal id="seq_clk_midi" uuid="de6909eb627413af5b43f97184c1306f4b3a4793">
+  <obj.normal id="seq_clk_sync" uuid="de6909eb627413af5b43f97184c1306f4b3a4793">
     <sDescription>Sequencer clock controller, midi/24ppq sync</sDescription>
     <author>Are Leistad</author>
     <license>BSD</license>
@@ -7,8 +7,10 @@
       <frac32.bipolar  name="tempo"      description="Clock frequency mod"/>
       <frac32.bipolar  name="gatelength" description="Gate length mod"/>
       <bool32          name="run"        description="Run/stop"/>
-      <!-- bool32          name="runsync"    description="Run/stop synced to next clock"/ -->
+      <!--bool32          name="runsync"    description="Run/stop synced to next clock"/ -->
       <bool32          name="reverse"    description="Play backwards"/>
+      <!--bool32          name="jojo"       description="Play forward and backwards"/-->
+      <!--bool32          name="endrep"     description="Play first/last step twice"/-->
       <bool32.rising   name="rstsync"    description="Reset to step 0 synved to next clock"/>
       <bool32.rising   name="rstimm"     description="Reset to step 0 immediately"/>
       <bool32.rising   name="24ppq"      description="External 24 PPQ clock"/>
@@ -111,13 +113,6 @@
 #ifdef USE_CLOCK_SMOOTHING
       float     midi_last_period;
 #endif
-
-      // Sending MIDI clock
-      ///  MidiSend1( (midi_device_t) attr_device, MIDI_START);
-      ///  MidiSend1( (midi_device_t) attr_device, MIDI_CONTINUE);
-      ///  MidiSend1( (midi_device_t) attr_device, MIDI_STOP);
-      ///  MidiSend1( (midi_device_t) attr_device, MIDI_TIMING_CLOCK);
-
       __attribute__ ( ( always_inline ) ) __STATIC_INLINE int midi_device_test( midi_device_t dev, uint8_t port, int selected_dev, uint8_t selected_port )
       {
         if(    (selected_dev == MIDI_DEVICE_OMNI)
@@ -150,7 +145,7 @@
 
                 // Using slightly lower frequency (63.9 vs 64.0) so we avoid leading edge spikes from late phase resets.
                 float f_clock = SAMPLERATE / period;
-                double phi = 63.9 * (double)(1 << 30) * f_clock / (SAMPLERATE * 1.0);
+                double phi = 63.99 * (double)(1 << 30) * f_clock / (SAMPLERATE * 1.0);
 
                 midi_clock_freq  = (uint32_t)phi;
                 phase            = 0;
@@ -213,17 +208,13 @@
             {
               midi_clock_run = 0;
             }
-          else
-            {
-              midi_clock_run = 1;
-            }
           start_sequence++;
         }
 
       // 24 PPQ or MIDI sync input
       if( attr_clocksource == CLOCK_SOURCE_external )
         {
-          if( inlet_24ppq > 0 && old_24ppq == 0 /*&& ktimer > 3*/  )
+          if( inlet_24ppq && !old_24ppq )
             {
               on_24ppq_clock();
             }
@@ -231,18 +222,17 @@
 
       // Catch counter reset requests, with immediate reset taking priority
 
-      if( inlet_rstimm > 0 && old_reset_imm == 0 )
+      if( inlet_rstimm && !old_reset_imm )
         {
           reset_imm = 1;
         }
-      else if( inlet_rstsync > 0 && old_reset_sync == 0 )
+      else if( inlet_rstsync && !old_reset_sync )
         {
           reset_sync = 1;
         }
 
-      //if( inlet_run )
-      if(   (inlet_run == 1 && attr_clocksource == CLOCK_SOURCE_internal)
-         || (inlet_run == 1 && midi_clock_run == 1 )
+      if(     inlet_run == 1
+          && (attr_clocksource == CLOCK_SOURCE_internal || midi_clock_run == 1)
         )
         {
           if( attr_clocksource == CLOCK_SOURCE_internal )
@@ -272,11 +262,6 @@
               first_run    = 0;
             }
           else if( phase < old_phase )
-          //else if(    phase < old_phase
-          //         && (    attr_clocksource == CLOCK_SOURCE_internal
-          //              || midi_clock_run == 1
-          //             )
-          //       )
             {
               // Clock! Update counter, taking any queued song position into account.
 
@@ -315,7 +300,7 @@
 
           // Handle sequencer reset, either immediate or synchronized to the next step
 
-          if( reset_imm == 1 )
+          if( reset_imm )
             {
               DEBUGF( "RESET IMM" );
               phase        = 0;
@@ -324,7 +309,7 @@
               step_count   = 0;
               enforce_trig = 1;
             }
-          else if( reset_sync == 1 )
+          else if( reset_sync )
             {
               if( phase < old_phase )
                 {
@@ -411,8 +396,9 @@
             {
               if( status == MIDI_START )
                 {
+                  // 25.04.2016 00:24 - Start is not bang on. Resync clock?
                   midi_clock_run   = 1;
-                  midi_clock_count = 0;
+                  midi_clock_count = midi_clock_div; // 25.04.2016 00:54 - Start on first midi clock!
                   step_count       = 0;
                   next_step_count  = 0;
                 }
@@ -426,15 +412,8 @@
                 }
               else if( status == MIDI_SONG_POSITION )
                 {
-                  midi_clock_count = 0;
-                  if( data1 == 0 && data2 == 0 )
-                    {
-                      next_step_count  = 0;
-                    }
-                  else
-                    {
-                      next_step_count  = 6 * ( (data2<<7) + data1 );
-                    }
+                  midi_clock_count = 0; // ...or not?
+                  next_step_count  = 6 * ( (data2<<7) + data1 );
                 }
             }
         }

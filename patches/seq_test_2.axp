@@ -1,5 +1,5 @@
 <patch-1.0 appVersion="1.0.9">
-   <comment type="patch/comment" x="28" y="14" text="Pattern chaining"/>
+   <comment type="patch/comment" x="28" y="14" text="Pattern chaining example"/>
    <obj type="math/+1" uuid="13c1a4574bb81783beb8839e81782b9a34e3fc17" name="+1_1" x="308" y="14">
       <params/>
       <attribs/>
@@ -12,7 +12,8 @@
       <params/>
       <attribs/>
    </obj>
-   <comment type="patch/comment" x="1008" y="56" text="Pattern mixer"/>
+   <comment type="patch/comment" x="28" y="56" text="Sequencer controls"/>
+   <comment type="patch/comment" x="980" y="56" text="Pattern mixer"/>
    <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="run" x="28" y="84">
       <params>
          <bool32.tgl name="b" value="1"/>
@@ -22,6 +23,7 @@
    <obj type="seq/seq_clk_midi" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_midi_1" x="140" y="84">
       <params>
          <int32 name="clockdiv" value="12"/>
+         <bool32.tgl name="miditransport" value="0"/>
          <frac32.s.map name="tempo" value="-10.0"/>
          <frac32.u.map name="gatelength" value="32.0"/>
          <int32 name="seqlength" value="8"/>
@@ -67,11 +69,11 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_1" x="1008" y="84">
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_1" x="980" y="84">
       <params/>
       <attribs/>
    </obj>
-   <obj type="./simple_syn" uuid="fd94ea9c-1380-423a-8001-ba9cd9bda19f" name="simple_syn_2" x="1106" y="84">
+   <obj type="./simple_syn" uuid="fd94ea9c-1380-423a-8001-ba9cd9bda19f" name="simple_syn_2" x="1078" y="84">
       <params>
          <frac32.s.map name="vcf3_1:pitch" value="-40.0"/>
          <frac32.u.map name="vcf3_1:reso" value="36.0"/>
@@ -86,10 +88,10 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="./delay_st_pp" uuid="a5a91366-fb17-46f4-a033-a8b5a206e87c" name="delay_st_pp_2" x="1246" y="84">
+   <obj type="./delay_st_pp" uuid="a5a91366-fb17-46f4-a033-a8b5a206e87c" name="delay_st_pp_2" x="1218" y="84">
       <params>
          <bool32.tgl name="pre_filter" value="1"/>
-         <frac32.u.map name="dial_1" value="64.0"/>
+         <frac32.u.map name="lp" value="64.0"/>
          <frac32.u.map name="hp" value="0.0"/>
          <bool32.tgl name="hp_enable" value="0"/>
          <frac32.u.map name="ping" value="50.0"/>
@@ -100,7 +102,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="audio/out stereo" uuid="a1ca7a567f535acc21055669829101d3ee7f0189" name="out_1" x="1372" y="84">
+   <obj type="audio/out stereo" uuid="a1ca7a567f535acc21055669829101d3ee7f0189" name="out_1" x="1344" y="84">
       <params/>
       <attribs/>
    </obj>
@@ -110,7 +112,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="logic/or 2" uuid="3805d3c84d30032a44fbdbe42d9a2988a1790a3e" name="or_1" x="1008" y="154">
+   <obj type="logic/or 2" uuid="3805d3c84d30032a44fbdbe42d9a2988a1790a3e" name="or_1" x="980" y="154">
       <params/>
       <attribs/>
    </obj>
@@ -120,7 +122,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_2" x="1008" y="224">
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_2" x="980" y="224">
       <params/>
       <attribs/>
    </obj>
@@ -166,11 +168,11 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="math/div 2" uuid="f14884de1baf3e615e12ee162a96a013eca76789" name="gate len" x="140" y="350">
+   <obj type="math/div 2" uuid="f14884de1baf3e615e12ee162a96a013eca76789" name="gate len" x="140" y="378">
       <params/>
       <attribs/>
    </obj>
-   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_3" x="140" y="392">
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_3" x="140" y="434">
       <params/>
       <attribs/>
    </obj>
@@ -320,7 +322,7 @@
    <windowPos>
       <x>295</x>
       <y>144</y>
-      <width>1547</width>
-      <height>868</height>
+      <width>1525</width>
+      <height>732</height>
    </windowPos>
 </patch-1.0>

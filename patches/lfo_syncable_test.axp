@@ -2,29 +2,31 @@
    <comment type="patch/comment" x="98" y="70" text="Test of external clock"/>
    <obj type="lfo/square" uuid="de6909eb64db13af5b43f979a4c130024b3a4793" name="square_1" x="112" y="98">
       <params>
-         <frac32.s.map name="pitch" value="38.22999980926514"/>
+         <frac32.s.map name="pitch" value="57.25999999999997"/>
       </params>
       <attribs/>
    </obj>
-   <obj type="lfo/lfo_syncable" uuid="d28abeeb627413af5343f9718111306f4b3a4793" name="lfo_syncable_1" x="266" y="98">
+   <obj type="lfo/lfo_syncable" uuid="d28abeeb627413af5343f9718111306f4b3a4793" name="lfo_syncable_1" x="252" y="98">
       <params>
          <int32 name="clockdiv" value="2"/>
+         <bool32.tgl name="miditransport" value="0"/>
          <frac32.s.map name="freq" value="30.0"/>
          <frac32.u.map name="pw" value="33.0"/>
       </params>
       <attribs>
          <combo attributeName="clocksource" selection="External"/>
+         <combo attributeName="device" selection="omni"/>
       </attribs>
    </obj>
-   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_1" x="462" y="98">
+   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_1" x="476" y="98">
       <params/>
       <attribs/>
    </obj>
-   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_3" x="630" y="98">
+   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_3" x="644" y="98">
       <params/>
       <attribs/>
    </obj>
-   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_5" x="798" y="98">
+   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_5" x="812" y="98">
       <params/>
       <attribs/>
    </obj>
@@ -35,15 +37,21 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_2" x="462" y="308">
+   <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="toggle_1" x="392" y="280">
+      <params>
+         <bool32.tgl name="b" value="0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_2" x="476" y="308">
       <params/>
       <attribs/>
    </obj>
-   <obj type="disp/kscope 128 b" uuid="e71f3dd9bc5b799ad703079e63fb929dd75def0" name="kscope_4" x="630" y="308">
+   <obj type="disp/kscope 128 b" uuid="e71f3dd9bc5b799ad703079e63fb929dd75def0" name="kscope_4" x="644" y="308">
       <params/>
       <attribs/>
    </obj>
-   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_6" x="798" y="308">
+   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_6" x="812" y="308">
       <params/>
       <attribs/>
    </obj>
@@ -63,6 +71,7 @@
       <net>
          <source obj="lfo_syncable_1" outlet="sine"/>
          <dest obj="kscope_4" inlet="in"/>
+         <dest obj="kscope_6" inlet="in"/>
       </net>
       <net>
          <source obj="lfo_syncable_1" outlet="clock"/>
@@ -75,6 +84,15 @@
       <net>
          <source obj="square_1" outlet="wave"/>
          <dest obj="sw_1" inlet="i1"/>
+      </net>
+      <net>
+         <source obj="toggle_1" outlet="o"/>
+         <dest obj="kscope_6" inlet="hold"/>
+         <dest obj="kscope_1" inlet="hold"/>
+         <dest obj="kscope_3" inlet="hold"/>
+         <dest obj="kscope_5" inlet="hold"/>
+         <dest obj="kscope_2" inlet="hold"/>
+         <dest obj="kscope_4" inlet="hold"/>
       </net>
    </nets>
    <settings>

@@ -1,0 +1,83 @@
+<objdefs appVersion="1.0.9">
+  <obj.normal id="preset_slave" uuid="awca12347f535a12880aa669829101d3ee7f0189">
+    <sDescription>Preset save/load slave
+    </sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <inlets/>
+    <outlets/>
+    <displays/>
+    <params/>
+    <attribs/>
+    <depends>
+      <depend>fatfs</depend>
+    </depends>
+    <code.declaration><![CDATA[
+      int32_t start_sequence;
+      const char *patches_filename;
+    ]]></code.declaration>
+    <code.init><![CDATA[
+      start_sequence = 0;
+      patches_filename = "patches.ppr";
+    ]]></code.init>
+    <code.krate><![CDATA[
+
+      /*
+       *  At start_sequence == 0 the master creates an empty file, "patches.ppp"
+       *  and writes it's parent pointer and parameter count to it.
+       *  At start_sequence == 1 the slaves append their parent pointers and param counts to the file.
+       */
+
+      if( start_sequence < 2 )
+        {
+          if( start_sequence == 1 )
+            {
+              FRESULT err;
+              FIL     FileObject;
+
+              err = f_open( &FileObject, patches_filename, FA_WRITE | FA_OPEN_EXISTING );
+              if( err != FR_OK )
+                {
+                  report_fatfs_error( err, patches_filename );
+                  if( err == FR_NO_FILE )
+                    {
+                      LogTextMessage("preset_slave: %s not found - is there a preset_manager object in the patch?", patches_filename );
+                    }
+                }
+              else
+                {
+                  err = f_lseek( &FileObject, f_size( &FileObject ) );
+                  if( err != FR_OK )
+                    {
+                      report_fatfs_error( err, patches_filename );
+                    }
+                  else
+                    {
+                      unsigned int  bytes_written;
+                      int32_t       pair[2];
+                      pair[0] = reinterpret_cast<int32_t>( parent );
+                      pair[1] = parent->NPEXCH;
+                      err = f_write( &FileObject, (uint8_t *) &pair, sizeof( pair ), &bytes_written );
+                      if( err != FR_OK )
+                        {
+                          report_fatfs_error( err, patches_filename );
+                        }
+                      else
+                        {
+                          LogTextMessage("preset_slave: registered parent patch 0x%08x with %d params", parent, parent->NPEXCH );
+                        }
+                    }
+                  f_close( &FileObject );
+                  if( err != FR_OK )
+                    {
+                      report_fatfs_error( err, patches_filename );
+                    }
+                }
+            }
+          start_sequence++;
+        }
+    ]]></code.krate>
+    <code.midihandler><![CDATA[
+    ]]></code.midihandler>
+  </obj.normal>
+</objdefs>

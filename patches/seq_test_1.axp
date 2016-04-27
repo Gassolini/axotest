@@ -1,5 +1,5 @@
 <patch-1.0 appVersion="1.0.9">
-   <comment type="patch/comment" x="28" y="14" text="Basic sequencer"/>
+   <comment type="patch/comment" x="28" y="14" text="Basic sequencer example"/>
    <obj type="math/+1" uuid="13c1a4574bb81783beb8839e81782b9a34e3fc17" name="+1_1" x="308" y="14">
       <params/>
       <attribs/>
@@ -12,6 +12,9 @@
       <params/>
       <attribs/>
    </obj>
+   <comment type="patch/comment" x="28" y="56" text="Sequencer controls"/>
+   <comment type="patch/comment" x="952" y="56" text="A simple synthesizer"/>
+   <comment type="patch/comment" x="1092" y="56" text="Delay  effect"/>
    <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="run" x="28" y="84">
       <params>
          <bool32.tgl name="b" value="1"/>
@@ -21,6 +24,7 @@
    <obj type="seq/seq_clk_midi" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_midi_1" x="140" y="84">
       <params>
          <int32 name="clockdiv" value="12"/>
+         <bool32.tgl name="miditransport" value="0"/>
          <frac32.s.map name="tempo" value="-10.0"/>
          <frac32.u.map name="gatelength" value="31.5"/>
          <int32 name="seqlength" value="8"/>
@@ -132,13 +136,13 @@
    <obj type="./delay_st_pp" uuid="a5a91366-fb17-46f4-a033-a8b5a206e87c" name="delay_st_pp_2" x="1092" y="84">
       <params>
          <bool32.tgl name="pre_filter" value="1"/>
-         <frac32.u.map name="dial_1" value="64.0"/>
+         <frac32.u.map name="lp" value="64.0"/>
          <frac32.u.map name="hp" value="0.0"/>
          <bool32.tgl name="hp_enable" value="0"/>
-         <frac32.u.map name="ping" value="50.0"/>
-         <frac32.u.map name="feedback" value="41.0"/>
-         <frac32.u.map name="time" value="24.5"/>
-         <frac32.u.map name="time_diff" value="32.0"/>
+         <frac32.u.map name="ping" value="64.0"/>
+         <frac32.u.map name="feedback" value="33.5"/>
+         <frac32.u.map name="time" value="24.0"/>
+         <frac32.u.map name="time_diff" value="41.0"/>
          <frac32.u.map name="dry wet" value="32.0"/>
       </params>
       <attribs/>
@@ -165,22 +169,53 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="math/div 2" uuid="f14884de1baf3e615e12ee162a96a013eca76789" name="gate len" x="140" y="350">
+   <obj type="math/div 2" uuid="f14884de1baf3e615e12ee162a96a013eca76789" name="gate len" x="210" y="378">
       <params/>
       <attribs/>
    </obj>
    <comment type="patch/comment" x="28" y="406" text="Test of external clock"/>
    <obj type="lfo/square" uuid="de6909eb64db13af5b43f979a4c130024b3a4793" name="square_1" x="28" y="434">
       <params>
-         <frac32.s.map name="pitch" value="27.0"/>
+         <frac32.s.map name="pitch" value="26.639999866485596"/>
       </params>
       <attribs/>
    </obj>
-   <comment type="patch/comment" x="28" y="546" text="Start/stop external clock"/>
+   <comment type="patch/comment" x="28" y="546" text="Start/stop the external ckock"/>
+   <comment type="patch/comment" x="770" y="546" text="Pitch control from MIDI keyboard and transpose dial, with glide"/>
    <obj type="phi/switch/sw 1-2b" uuid="890a7a6fd3eda48e1100a9b9462a2678381f23c1" name="sw_1" x="28" y="574">
       <params>
          <bool32.tgl name="s" value="1"/>
       </params>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/dial_pitch" uuid="86ae7d7f49093cb1c94aed72274d118a23d46692" name="dial_pitch_1" x="770" y="574">
+      <params>
+         <frac32.s.map name="pitch" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="glide on/off" x="882" y="574">
+      <params>
+         <bool32.tgl name="b" value="0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="math/glide_fast" uuid="109032422cc8ebfd6e03c6b92f41115e3172dad9" name="glide_fast_1" x="966" y="574">
+      <params>
+         <frac32.s.map name="time" value="-26.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="midi/in/keyb" uuid="53b04874696932f38aceaa168bd5d9efb743716d" name="keyb_1" x="1078" y="574">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_2" x="1190" y="574">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_1" x="1190" y="644">
+      <params/>
       <attribs/>
    </obj>
    <nets>
@@ -239,10 +274,6 @@
          <dest obj="simple_syn_2" inlet="gate"/>
       </net>
       <net>
-         <source obj="step enable" outlet="sig1"/>
-         <dest obj="simple_syn_2" inlet="pitch"/>
-      </net>
-      <net>
          <source obj="step enable" outlet="sig2"/>
          <dest obj="simple_syn_2" inlet="velo"/>
       </net>
@@ -265,6 +296,34 @@
       <net>
          <source obj="square_1" outlet="wave"/>
          <dest obj="sw_1" inlet="i1"/>
+      </net>
+      <net>
+         <source obj="+_2" outlet="out"/>
+         <dest obj="+_1" inlet="in1"/>
+      </net>
+      <net>
+         <source obj="keyb_1" outlet="note"/>
+         <dest obj="+_2" inlet="in1"/>
+      </net>
+      <net>
+         <source obj="dial_pitch_1" outlet="out"/>
+         <dest obj="+_2" inlet="in2"/>
+      </net>
+      <net>
+         <source obj="glide on/off" outlet="o"/>
+         <dest obj="glide_fast_1" inlet="en"/>
+      </net>
+      <net>
+         <source obj="+_1" outlet="out"/>
+         <dest obj="glide_fast_1" inlet="in"/>
+      </net>
+      <net>
+         <source obj="step enable" outlet="sig1"/>
+         <dest obj="+_1" inlet="in2"/>
+      </net>
+      <net>
+         <source obj="glide_fast_1" outlet="out"/>
+         <dest obj="simple_syn_2" inlet="pitch"/>
       </net>
    </nets>
    <settings>
