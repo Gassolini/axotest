@@ -1,0 +1,201 @@
+<objdefs appVersion="1.0.9">
+  <obj.normal id="stepseq_txt" uuid="4a690922611b13af5b43f97484c130024b3aaab">
+    <sDescription>Step sequencer with string based sequence data</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <inlets>
+      <int32           name="step"       description="Step number"/>
+      <bool32.rising   name="clock"      description="Step clock"/>
+      <bool32          name="run"        description="Enable playing"/>
+      <bool32          name="reverse"    description="Play backwards"/>
+      <bool32.rising   name="rstsync"    description="Reset to step 0 on next clock"/>
+      <bool32.rising   name="rstimm"     description="Reset to step 0 immediately"/>
+      <charptr32       name="sequence"   description="Sequence data"/>
+    </inlets>
+    <outlets>
+      <int32  name="step"        description="Step number out"/>
+      <bool32 name="gate"        description="Gate/clock out"/>
+      <bool32.pulse name="start" description="Pulse when step 1 starts"/>
+    </outlets>
+    <displays/>
+    <params>
+      <frac32.s.map.lfopitch name="tempo"      description="Clock frequency modulation"/>
+      <frac32.u.map.ratio    name="gatelength" description="Gate length"/>
+      <int32 name="seqlength" noLabel="false">
+         <MinValue i="1"/>
+         <MaxValue i="64"/>
+      </int32>
+    </params>
+    <attribs>
+    </attribs>
+    <code.declaration><![CDATA[
+
+      uint32_t  first_run;
+      uint32_t  old_reset_sync;
+      uint32_t  old_reset_imm;
+      uint32_t  reset_sync;
+      uint32_t  reset_imm;
+      int       noof_steps;
+
+      int32_t *array;
+
+      int seq_index;
+      /*
+       *  Sequences are on the form "A4,C#3,*,E3", where * means silent step.
+       *
+       *  Middle pitch = E4 = 0
+       *  One semitone = 0x00200000
+       *
+       */
+#define read_and_wrap( var ) \
+            var = param_sequence[seq_index++];
+            if( var == 0 ) \
+              { \
+                seq_index = 0; \
+                var = param_sequence[seq_index++]; \
+              } \
+            if( var == 0 ) \
+              return -1;
+
+#define unread_and_wrap() \
+            if( --seq_index < 0 ) \
+              while( param_sequence[++seq_index] != 0 ) \
+                {}
+
+            if( var == 0 ) \
+              { \
+                seq_index = 0; \
+                var = param_sequence[seq_index++]; \
+              } \
+            if( var == 0 ) \
+              return -1;
+
+      int32_t get_next_step( void )
+      {
+                      //  A  B  C  D  E  F  G
+        char scale[7] = { 0, 2, 3, 5, 7, 8, 10 };
+
+        int32_t note;
+
+        read_and_wrap( note )
+        while( note == ',' || note == ' ' )
+          {
+            read_and_wrap( note );
+          }
+
+        if( note == '*' )
+          {
+            // silent step
+            return -1;
+          }
+        else if ( note >= 'A' && note <= 'G' )
+          {
+            int32_t octave;
+            int32_t accidental;
+
+            note = notes[ note - 'A' ];
+
+            read_and_wrap( octave );
+            if( octave >= '0' && octave <= '9' )
+              {
+                octave = (octave - '0' + 1 ) * 12;
+                read_and_wrap( accidental );
+              }
+            else
+              {
+                accidental = octave;    // no octave, so possibly accidental
+                octave = 4;             // use 4 as the default octave
+              }
+
+            if( accidental == '#' )
+              {
+                accidental =  1;
+              }
+            else if( accidental == 'b' )
+              {
+                accidental = -1;
+              }
+            else
+              {
+                accidental = 0;
+              }
+
+            return (((note + accidental) * octave) - 69 ) * 0x00200000;
+
+          }
+        return -1;
+      }
+
+    ]]></code.declaration>
+    <code.init><![CDATA[
+
+      first_run       = 1;
+      old_reset_sync  = 0;
+      old_reset_imm   = 0;
+      reset_sync      = 0;
+      reset_imm       = 0;
+
+      noof_steps      = 0;
+
+      intt32_t _array[16] __attribute__ ((section (".sdram")));
+      array = &_array[0];
+//      {
+//        int i;
+//        for(i=0;i<LENGTH;i++) array[i]=0;
+//      }
+//      attr_init
+
+
+    ]]></code.init>
+    <code.krate><![CDATA[
+
+      int32_t freq;
+      int32_t gatelength;
+
+      // Reset output pulses
+      //outlet_clock = 0;
+      outlet_start = 0;
+
+      // Catch counter reset requests, with immediate reset taking priority
+
+      if( inlet_rstimm && !old_reset_imm )
+        {
+          reset_imm = 1;
+        }
+      else if( inlet_rstsync && !old_reset_sync )
+        {
+          reset_sync = 1;
+        }
+      old_reset_sync = inlet_rstsync;
+      old_reset_imm  = inlet_rstimm;
+
+      if( inlet_run )
+        {
+          // Handle sequencer reset, either immediate or synchronized to next step
+
+          if( reset_imm )
+            {
+              //phase         = 0;
+              reset_imm     = 0;
+              reset_sync    = 0;
+              //step_count    = 0;
+              //enforce_trig  = 1;
+            }
+          else if( reset_sync )
+            {
+              if( phase < old_phase )
+                {
+                  //phase         = 0;
+                  reset_imm     = 0;
+                  reset_sync    = 0;
+                  //step_count    = 0;
+                }
+            }
+        }
+      else
+        {
+        }
+
+    ]]></code.krate>
+  </obj.normal>
+</objdefs>

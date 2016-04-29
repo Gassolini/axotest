@@ -7,11 +7,7 @@
       <frac32buffer.bipolar name="left" description="Left channel"/>
       <frac32buffer.bipolar name="right" description="Right channel"/>
     </inlets>
-    <outlets>
-      <frac32buffer.bipolar name="left" description="Left channel"/>
-      <frac32buffer.bipolar name="right" description="Right channel"/>
-      <frac32 name="vol" description="Right channel"/>
-    </outlets>
+    <outlets/>
     <displays>
       <frac32.vu name="vuLeft"/>
       <frac32.vu name="vuRight"/>
@@ -28,11 +24,7 @@
           r = ___SMMUL( param_volume, inlet_right[j])<<2;
           AudioOutputLeft[j]  += __SSAT(l,28);
           AudioOutputRight[j] += __SSAT(r,28);
-          outlet_left[j]  = __SSAT(l,28);
-          outlet_right[j] = __SSAT(r,28);
         }
-          outlet_vol = param_volume;
-
       disp_vuLeft  = l;
       disp_vuRight = r;
     ]]></code.krate>
