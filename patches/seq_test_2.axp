@@ -16,13 +16,13 @@
    <comment type="patch/comment" x="980" y="56" text="Pattern mixer"/>
    <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="run" x="28" y="84">
       <params>
-         <bool32.tgl name="b" value="1"/>
+         <bool32.tgl name="b" value="0"/>
       </params>
       <attribs/>
    </obj>
-   <obj type="seq/seq_clk_midi" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_midi_1" x="140" y="84">
+   <obj type="seq/seq_clk_sync" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_sync_1" x="140" y="84">
       <params>
-         <int32 name="clockdiv" value="12"/>
+         <int32 name="clockdiv" value="1"/>
          <bool32.tgl name="miditransport" value="0"/>
          <frac32.s.map name="tempo" value="-10.0"/>
          <frac32.u.map name="gatelength" value="32.0"/>
@@ -116,9 +116,9 @@
       <params/>
       <attribs/>
    </obj>
-   <obj type="ctrl/button" uuid="ef3d13774349df85aa9bfecf30dbc91ab8488b3f" name="reset:_sync" x="28" y="224">
+   <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="upndown" x="28" y="210">
       <params>
-         <bool32.mom name="b" value="0"/>
+         <bool32.tgl name="b" value="0"/>
       </params>
       <attribs/>
    </obj>
@@ -126,9 +126,9 @@
       <params/>
       <attribs/>
    </obj>
-   <obj type="ctrl/button" uuid="ef3d13774349df85aa9bfecf30dbc91ab8488b3f" name="reset:_immediate" x="28" y="294">
+   <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="endrep" x="28" y="266">
       <params>
-         <bool32.mom name="b" value="0"/>
+         <bool32.tgl name="b" value="0"/>
       </params>
       <attribs/>
    </obj>
@@ -168,25 +168,57 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="math/div 2" uuid="f14884de1baf3e615e12ee162a96a013eca76789" name="gate len" x="140" y="378">
+   <obj type="ctrl/button" uuid="ef3d13774349df85aa9bfecf30dbc91ab8488b3f" name="reset:_sync" x="28" y="336">
+      <params>
+         <bool32.mom name="b" value="0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/button" uuid="ef3d13774349df85aa9bfecf30dbc91ab8488b3f" name="reset:_immediate" x="28" y="406">
+      <params>
+         <bool32.mom name="b" value="0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="math/div 2" uuid="f14884de1baf3e615e12ee162a96a013eca76789" name="gate len" x="140" y="420">
       <params/>
       <attribs/>
    </obj>
-   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_3" x="140" y="434">
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_3" x="210" y="420">
       <params/>
+      <attribs/>
+   </obj>
+   <comment type="patch/comment" x="28" y="490" text="External clock example"/>
+   <comment type="patch/comment" x="28" y="504" text="with clock source and diveder overrides"/>
+   <obj type="ctrl/i radio 4 h" uuid="f87ae81e3162014f3bdca0f56dbbdf9322e69dfd" name="clock source override" x="28" y="518">
+      <params>
+         <int32.hradio name="value" value="2"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="lfo/square" uuid="de6909eb64db13af5b43f979a4c130024b3a4793" name="ext clock source" x="154" y="532">
+      <params>
+         <frac32.s.map name="pitch" value="-11.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/i radio 8 h" uuid="81c4cf13a2d0e267b327a4663a711c2f96f7f9b7" name="clock divider override" x="28" y="574">
+      <params>
+         <int32.hradio name="value" value="0"/>
+      </params>
       <attribs/>
    </obj>
    <nets>
       <net>
          <source obj="run" outlet="o"/>
-         <dest obj="seq_clk_midi_1" inlet="run"/>
+         <dest obj="seq_clk_sync_1" inlet="run"/>
       </net>
       <net>
          <source obj="reverse" outlet="o"/>
-         <dest obj="seq_clk_midi_1" inlet="reverse"/>
+         <dest obj="seq_clk_sync_1" inlet="reverse"/>
       </net>
       <net>
-         <source obj="seq_clk_midi_1" outlet="step"/>
+         <source obj="seq_clk_sync_1" outlet="step"/>
          <dest obj="+1_1" inlet="a"/>
          <dest obj="ibar_1" inlet="in"/>
          <dest obj="pattern 1 gate" inlet="step"/>
@@ -196,11 +228,11 @@
       </net>
       <net>
          <source obj="reset:_sync" outlet="o"/>
-         <dest obj="seq_clk_midi_1" inlet="rstsync"/>
+         <dest obj="seq_clk_sync_1" inlet="rstsync"/>
       </net>
       <net>
          <source obj="reset:_immediate" outlet="o"/>
-         <dest obj="seq_clk_midi_1" inlet="rstimm"/>
+         <dest obj="seq_clk_sync_1" inlet="rstimm"/>
       </net>
       <net>
          <source obj="pattern 1 pitch" outlet="out"/>
@@ -211,7 +243,7 @@
          <dest obj="pattern 1 enable" inlet="sig2"/>
       </net>
       <net>
-         <source obj="seq_clk_midi_1" outlet="gate"/>
+         <source obj="seq_clk_sync_1" outlet="gate"/>
          <dest obj="pattern 1 enable" inlet="gate1"/>
          <dest obj="pattern 2 enable" inlet="gate1"/>
       </net>
@@ -234,7 +266,7 @@
       </net>
       <net>
          <source obj="gate len" outlet="out"/>
-         <dest obj="seq_clk_midi_1" inlet="gatelength"/>
+         <dest obj="seq_clk_sync_1" inlet="gatelength"/>
       </net>
       <net>
          <source obj="pattern 2 pitch" outlet="out"/>
@@ -308,6 +340,26 @@
          <source obj="+_3" outlet="out"/>
          <dest obj="gate len" inlet="in"/>
       </net>
+      <net>
+         <source obj="upndown" outlet="o"/>
+         <dest obj="seq_clk_sync_1" inlet="upndown"/>
+      </net>
+      <net>
+         <source obj="endrep" outlet="o"/>
+         <dest obj="seq_clk_sync_1" inlet="endrep"/>
+      </net>
+      <net>
+         <source obj="clock source override" outlet="out"/>
+         <dest obj="seq_clk_sync_1" inlet="clkoverride"/>
+      </net>
+      <net>
+         <source obj="clock divider override" outlet="out"/>
+         <dest obj="seq_clk_sync_1" inlet="divoverride"/>
+      </net>
+      <net>
+         <source obj="ext clock source" outlet="wave"/>
+         <dest obj="seq_clk_sync_1" inlet="24ppq"/>
+      </net>
    </nets>
    <settings>
       <subpatchmode>no</subpatchmode>
@@ -320,9 +372,9 @@
    </settings>
    <notes><![CDATA[]]></notes>
    <windowPos>
-      <x>295</x>
-      <y>144</y>
+      <x>337</x>
+      <y>136</y>
       <width>1525</width>
-      <height>732</height>
+      <height>784</height>
    </windowPos>
 </patch-1.0>

@@ -1,5 +1,10 @@
 <patch-1.0 appVersion="1.0.9">
    <comment type="patch/comment" x="574" y="14" text="-------- Ping/pong/stereo delay --------"/>
+   <comment type="patch/comment" x="826" y="14" text="Limit to avoid delay time wrap around"/>
+   <obj type="conv/interp" uuid="d68c1a8709d8b55e3de8715d727ec0a2d8569d9a" name="interp_1" x="1022" y="14">
+      <params/>
+      <attribs/>
+   </obj>
    <obj type="patch/inlet a" uuid="b577fe41e0a6bc7b5502ce33cb8a3129e2e28ee5" name="in_l" x="98" y="56">
       <params/>
       <attribs/>
@@ -48,7 +53,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="delay/read" uuid="9323a43569373145e559ad309eaf65a47b14cb54" name="delay l" x="1064" y="56">
+   <obj type="delay/read interp" uuid="e3d8b8823ab551c588659520bf6cc25c630466c7" name="read_1" x="1064" y="56">
       <params>
          <frac32.u.map name="time" value="0.0"/>
       </params>
@@ -60,7 +65,7 @@
       <params/>
       <attribs/>
    </obj>
-   <obj type="patch/outlet a" uuid="abd8c5fd3b0524a6630f65cad6dc27f6c58e2a3e" name="out_l" x="1344" y="56">
+   <obj type="patch/outlet a" uuid="abd8c5fd3b0524a6630f65cad6dc27f6c58e2a3e" name="out_l" x="1372" y="56">
       <params/>
       <attribs/>
    </obj>
@@ -68,7 +73,26 @@
       <params/>
       <attribs/>
    </obj>
-   <comment type="patch/comment" x="784" y="210" text="Limit to avoid delay time wrap around"/>
+   <obj type="math/*c" uuid="7d5ef61c3bcd571ee6bbd8437ef3612125dfb225" name="*c_3" x="1120" y="168">
+      <params>
+         <frac32.u.map name="amp" value="1.2849993896484362"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/lfo/sin_ph_b" uuid="75f7330c26a11233215dcdd3ba3b9008545c1daa9" name="sin_ph_b_1" x="1288" y="168">
+      <params>
+         <frac32.s.map name="pitch" value="-64.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="math/*" uuid="922423f2db9f222aa3e5ba095778288c446da47a" name="mod gain l" x="966" y="182">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="yime mix l" x="1036" y="182">
+      <params/>
+      <attribs/>
+   </obj>
    <obj type="math/*" uuid="922423f2db9f222aa3e5ba095778288c446da47a" name="time_l" x="966" y="238">
       <params/>
       <attribs/>
@@ -121,7 +145,25 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="ctrl/dial p" uuid="cc5d2846c3d50e425f450c4b9851371b54f4d674" name="dry wet" x="1246" y="252">
+   <obj type="ctrl/dial p" uuid="cc5d2846c3d50e425f450c4b9851371b54f4d674" name="mod amt" x="1036" y="252">
+      <params>
+         <frac32.u.map name="value" onParent="true" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/dial b" uuid="862e7d7f29093cb1ce4aed72244d118ad4d46692" name="mod freq" x="1120" y="252">
+      <params>
+         <frac32.s.map name="value" onParent="true" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/dial b" uuid="862e7d7f29093cb1ce4aed72244d118ad4d46692" name="mod phase" x="1204" y="252">
+      <params>
+         <frac32.s.map name="value" onParent="true" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/dial p" uuid="cc5d2846c3d50e425f450c4b9851371b54f4d674" name="dry wet" x="1400" y="252">
       <params>
          <frac32.u.map name="value" onParent="true" value="32.0"/>
       </params>
@@ -131,14 +173,32 @@
       <params/>
       <attribs/>
    </obj>
+   <obj type="drj/lfo/sin_ph_b" uuid="75f7330c26a11233215dcdd3ba3b9008545c1daa9" name="sin_ph_b_2" x="1288" y="308">
+      <params>
+         <frac32.s.map name="pitch" value="-64.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="math/inv" uuid="565521d3699b36d8095aa1c79b9ad0046fb133ce" name="inv_2" x="1190" y="336">
+      <params/>
+      <attribs/>
+   </obj>
    <comment type="patch/comment" x="182" y="350" text="Pre delay filter"/>
    <comment type="patch/comment" x="294" y="350" text="Feedback LP and HP filters"/>
    <comment type="patch/comment" x="462" y="350" text="Enable hi pass"/>
    <comment type="patch/comment" x="574" y="350" text="Stereo/Ping"/>
    <comment type="patch/comment" x="658" y="350" text="Feedback gain"/>
    <comment type="patch/comment" x="770" y="350" text="Delay time"/>
-   <comment type="patch/comment" x="1246" y="350" text="Dry/wet mix"/>
+   <comment type="patch/comment" x="1400" y="350" text="Dry/wet mix"/>
    <comment type="patch/comment" x="854" y="364" text="L/R time diff"/>
+   <obj type="math/*" uuid="922423f2db9f222aa3e5ba095778288c446da47a" name="mod gain r" x="966" y="364">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="time mix r" x="1036" y="364">
+      <params/>
+      <attribs/>
+   </obj>
    <obj type="patch/inlet a" uuid="b577fe41e0a6bc7b5502ce33cb8a3129e2e28ee5" name="in_r" x="98" y="434">
       <params/>
       <attribs/>
@@ -187,7 +247,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="delay/read" uuid="9323a43569373145e559ad309eaf65a47b14cb54" name="delay r" x="1064" y="434">
+   <obj type="delay/read interp" uuid="e3d8b8823ab551c588659520bf6cc25c630466c7" name="read_2" x="1064" y="434">
       <params>
          <frac32.u.map name="time" value="0.0"/>
       </params>
@@ -199,11 +259,15 @@
       <params/>
       <attribs/>
    </obj>
-   <obj type="patch/outlet a" uuid="abd8c5fd3b0524a6630f65cad6dc27f6c58e2a3e" name="out_r" x="1344" y="434">
+   <obj type="patch/outlet a" uuid="abd8c5fd3b0524a6630f65cad6dc27f6c58e2a3e" name="out_r" x="1372" y="434">
       <params/>
       <attribs/>
    </obj>
    <obj type="demux/demux 2" uuid="f48c5f63c31c60c077648e2a0886e592e4fa9434" name="pre select r" x="182" y="504">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="conv/interp" uuid="d68c1a8709d8b55e3de8715d727ec0a2d8569d9a" name="interp_2" x="1022" y="532">
       <params/>
       <attribs/>
    </obj>
@@ -239,7 +303,7 @@
          <dest obj="xfade_fb_l" inlet="c"/>
       </net>
       <net>
-         <source obj="delay l" outlet="out"/>
+         <source obj="read_1" outlet="out"/>
          <dest obj="xfade_l" inlet="i2"/>
          <dest obj="filter_mix_l" inlet="in1"/>
       </net>
@@ -248,7 +312,7 @@
          <dest obj="out_l" inlet="outlet"/>
       </net>
       <net>
-         <source obj="delay r" outlet="out"/>
+         <source obj="read_2" outlet="out"/>
          <dest obj="xfade_r" inlet="i2"/>
          <dest obj="filter_mix_r" inlet="in1"/>
       </net>
@@ -353,28 +417,83 @@
          <dest obj="xfade_fb_r" inlet="i2"/>
       </net>
       <net>
-         <source obj="*c_1" outlet="out"/>
-         <dest obj="delay l" inlet="time"/>
-      </net>
-      <net>
-         <source obj="time_l" outlet="result"/>
-         <dest obj="*c_1" inlet="in"/>
-      </net>
-      <net>
-         <source obj="*c_2" outlet="out"/>
-         <dest obj="delay r" inlet="time"/>
-      </net>
-      <net>
-         <source obj="time_r" outlet="result"/>
-         <dest obj="*c_2" inlet="in"/>
-      </net>
-      <net>
          <source obj="time_diff" outlet="lgain"/>
          <dest obj="time_l" inlet="b"/>
       </net>
       <net>
          <source obj="time_diff" outlet="rgain"/>
          <dest obj="time_r" inlet="b"/>
+      </net>
+      <net>
+         <source obj="*c_2" outlet="out"/>
+         <dest obj="interp_2" inlet="i"/>
+      </net>
+      <net>
+         <source obj="interp_2" outlet="o"/>
+         <dest obj="read_2" inlet="time"/>
+      </net>
+      <net>
+         <source obj="*c_1" outlet="out"/>
+         <dest obj="interp_1" inlet="i"/>
+      </net>
+      <net>
+         <source obj="interp_1" outlet="o"/>
+         <dest obj="read_1" inlet="time"/>
+      </net>
+      <net>
+         <source obj="time_r" outlet="result"/>
+         <dest obj="time mix r" inlet="in1"/>
+      </net>
+      <net>
+         <source obj="time_l" outlet="result"/>
+         <dest obj="yime mix l" inlet="in1"/>
+      </net>
+      <net>
+         <source obj="mod phase" outlet="out"/>
+         <dest obj="sin_ph_b_1" inlet="phase"/>
+         <dest obj="inv_2" inlet="in"/>
+      </net>
+      <net>
+         <source obj="inv_2" outlet="out"/>
+         <dest obj="sin_ph_b_2" inlet="phase"/>
+      </net>
+      <net>
+         <source obj="*c_3" outlet="out"/>
+         <dest obj="mod gain r" inlet="b"/>
+         <dest obj="mod gain l" inlet="b"/>
+      </net>
+      <net>
+         <source obj="sin_ph_b_1" outlet="sine"/>
+         <dest obj="mod gain l" inlet="a"/>
+      </net>
+      <net>
+         <source obj="sin_ph_b_2" outlet="sine"/>
+         <dest obj="mod gain r" inlet="a"/>
+      </net>
+      <net>
+         <source obj="mod gain l" outlet="result"/>
+         <dest obj="yime mix l" inlet="in2"/>
+      </net>
+      <net>
+         <source obj="mod gain r" outlet="result"/>
+         <dest obj="time mix r" inlet="in2"/>
+      </net>
+      <net>
+         <source obj="mod freq" outlet="out"/>
+         <dest obj="sin_ph_b_1" inlet="pitch"/>
+         <dest obj="sin_ph_b_2" inlet="pitch"/>
+      </net>
+      <net>
+         <source obj="yime mix l" outlet="out"/>
+         <dest obj="*c_1" inlet="in"/>
+      </net>
+      <net>
+         <source obj="time mix r" outlet="out"/>
+         <dest obj="*c_2" inlet="in"/>
+      </net>
+      <net>
+         <source obj="mod amt" outlet="out"/>
+         <dest obj="*c_3" inlet="in"/>
       </net>
    </nets>
    <settings>
@@ -389,9 +508,9 @@
    </settings>
    <notes><![CDATA[]]></notes>
    <windowPos>
-      <x>241</x>
-      <y>159</y>
-      <width>1553</width>
-      <height>612</height>
+      <x>229</x>
+      <y>113</y>
+      <width>1607</width>
+      <height>830</height>
    </windowPos>
 </patch-1.0>
