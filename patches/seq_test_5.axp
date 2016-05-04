@@ -59,7 +59,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="./simple_syn" uuid="fd94ea9c-1380-423a-8001-ba9cd9bda19f" name="simple_syn_3" x="882" y="84">
+   <obj type="simple_syn" uuid="fd94ea9c-1380-423a-8001-ba9cd9bda19f" name="simple_syn_3" x="882" y="84">
       <params>
          <frac32.s.map name="vcf3_1:pitch" value="-30.0"/>
          <frac32.u.map name="vcf3_1:reso" value="21.5"/>
@@ -74,7 +74,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="./simple_syn" uuid="fd94ea9c-1380-423a-8001-ba9cd9bda19f" name="simple_syn_2" x="1008" y="84">
+   <obj type="simple_syn" uuid="fd94ea9c-1380-423a-8001-ba9cd9bda19f" name="simple_syn_2" x="1008" y="84">
       <params>
          <frac32.s.map name="vcf3_1:pitch" value="3.0"/>
          <frac32.u.map name="vcf3_1:reso" value="47.0"/>
@@ -96,7 +96,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="./delay_st_pp" uuid="a5a91366-fb17-46f4-a033-a8b5a206e87c" name="delay_st_pp_2" x="1246" y="84">
+   <obj type="delay_st_pp" uuid="a5a91366-fb17-46f4-a033-a8b5a206e87c" name="delay_st_pp_2" x="1246" y="84">
       <params>
          <bool32.tgl name="pre_filter" value="1"/>
          <frac32.u.map name="lp" value="64.0"/>

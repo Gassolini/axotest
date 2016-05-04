@@ -8,7 +8,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="./simple_syn" uuid="263f2f40-286b-48b5-b387-1b6276e154bf" name="simple_syn_1" x="126" y="42">
+   <obj type="simple_syn" uuid="263f2f40-286b-48b5-b387-1b6276e154bf" name="simple_syn_1" x="126" y="42">
       <params>
          <frac32.s.map name="osc" value="-20.0"/>
          <frac32.s.map name="pw" value="0.0"/>
@@ -27,7 +27,7 @@
    </obj>
    <obj type="math/*c" uuid="7a66f52a9594e7e9eb31328ea725cb3641a80b55" name="feedback" x="266" y="42">
       <params>
-         <frac32.u.map name="amp" value="0.0"/>
+         <frac32.u.map name="amp" value="35.0"/>
       </params>
       <attribs/>
    </obj>
@@ -44,11 +44,11 @@
    <obj type="drj/delay/read_sync" uuid="9abca43569373145e559ad309eaf65a47b14cb54" name="read_sync_1" x="588" y="42">
       <params>
          <int32 name="clockdiv" value="1"/>
-         <frac32.u.map name="time" value="21.0"/>
+         <frac32.u.map name="time" value="31.5"/>
       </params>
       <attribs>
          <objref attributeName="delayname" obj="write_1"/>
-         <combo attributeName="clocksource" selection="External"/>
+         <combo attributeName="clocksource" selection="Internal"/>
          <combo attributeName="device" selection="omni"/>
       </attribs>
    </obj>
@@ -60,6 +60,12 @@
       <params/>
       <attribs/>
    </obj>
+   <obj type="ctrl/dial b" uuid="862e7d7f29093cb1ce4aed72244d118ad4d46692" name="dial_1" x="490" y="112">
+      <params>
+         <frac32.s.map name="value" value="7.0"/>
+      </params>
+      <attribs/>
+   </obj>
    <obj type="lfo/sine" uuid="75f7330c26a13953215dccc3b7b9008545c9daa9" name="sine_1" x="14" y="154">
       <params>
          <frac32.s.map name="pitch" value="-59.0"/>
@@ -68,13 +74,7 @@
    </obj>
    <obj type="math/*c" uuid="7a66f52a9594e7e9eb31328ea725cb3641a80b55" name="*c_2" x="266" y="154">
       <params>
-         <frac32.u.map name="amp" value="0.0"/>
-      </params>
-      <attribs/>
-   </obj>
-   <obj type="ctrl/dial b" uuid="862e7d7f29093cb1ce4aed72244d118ad4d46692" name="dial_1" x="504" y="154">
-      <params>
-         <frac32.s.map name="value" value="10.0"/>
+         <frac32.u.map name="amp" value="21.0"/>
       </params>
       <attribs/>
    </obj>
@@ -89,6 +89,12 @@
       </params>
       <attribs/>
    </obj>
+   <obj type="ctrl/dial b" uuid="862e7d7f29093cb1ce4aed72244d118ad4d46692" name="dial_4" x="504" y="224">
+      <params>
+         <frac32.s.map name="value" value="27.0"/>
+      </params>
+      <attribs/>
+   </obj>
    <obj type="math/*c" uuid="7d5ef61c3bcd571ee6bbd8437ef3612125dfb225" name="*c_1" x="14" y="252">
       <params>
          <frac32.u.map name="amp" value="0.0"/>
@@ -97,18 +103,18 @@
    </obj>
    <obj type="math/*c" uuid="7a66f52a9594e7e9eb31328ea725cb3641a80b55" name="feedback_" x="266" y="308">
       <params>
-         <frac32.u.map name="amp" value="33.0"/>
+         <frac32.u.map name="amp" value="0.0"/>
       </params>
       <attribs/>
    </obj>
-   <obj type="conv/interp" uuid="d68c1a8709d8b55e3de8715d727ec0a2d8569d9a" name="interp_1" x="504" y="308">
+   <obj type="conv/interp" uuid="d68c1a8709d8b55e3de8715d727ec0a2d8569d9a" name="interp_2" x="504" y="308">
       <params/>
       <attribs/>
    </obj>
-   <obj type="delay/read_interp_sync" uuid="e3d8b551c58865958823ab20186cc25ccf0466c7" name="read_interp_sync_1" x="588" y="308">
+   <obj type="drj/delay/read_interp_sync" uuid="e3d8b551c58865958823ab20186cc25ccf0466c7" name="read_interp_sync_1" x="588" y="308">
       <params>
          <int32 name="clockdiv" value="1"/>
-         <frac32.u.map name="time" value="15.0"/>
+         <frac32.u.map name="time" value="64.0"/>
       </params>
       <attribs>
          <objref attributeName="delayname" obj="write_1"/>
@@ -120,19 +126,29 @@
       <params/>
       <attribs/>
    </obj>
+   <obj type="conv/interp" uuid="d68c1a8709d8b55e3de8715d727ec0a2d8569d9a" name="interp_1" x="504" y="364">
+      <params/>
+      <attribs/>
+   </obj>
    <obj type="math/+" uuid="faedbea4612d9bd3644d6d3bf31946d848a70e19" name="+_4" x="378" y="378">
       <params/>
       <attribs/>
    </obj>
    <obj type="math/*c" uuid="7a66f52a9594e7e9eb31328ea725cb3641a80b55" name="*c_3" x="266" y="420">
       <params>
-         <frac32.u.map name="amp" value="27.5"/>
+         <frac32.u.map name="amp" value="0.0"/>
       </params>
       <attribs/>
    </obj>
    <obj type="ctrl/dial b" uuid="862e7d7f29093cb1ce4aed72244d118ad4d46692" name="dial_2" x="504" y="420">
       <params>
-         <frac32.s.map name="value" value="-42.0"/>
+         <frac32.s.map name="value" value="-55.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="ctrl/dial b" uuid="862e7d7f29093cb1ce4aed72244d118ad4d46692" name="dial_3" x="434" y="448">
+      <params>
+         <frac32.s.map name="value" value="47.0"/>
       </params>
       <attribs/>
    </obj>
@@ -219,6 +235,18 @@
       <net>
          <source obj="interp_1" outlet="o"/>
          <dest obj="read_interp_sync_1" inlet="tmod"/>
+      </net>
+      <net>
+         <source obj="interp_2" outlet="o"/>
+         <dest obj="read_interp_sync_1" inlet="time"/>
+      </net>
+      <net>
+         <source obj="dial_3" outlet="out"/>
+         <dest obj="interp_2" inlet="i"/>
+      </net>
+      <net>
+         <source obj="dial_4" outlet="out"/>
+         <dest obj="read_sync_1" inlet="time"/>
       </net>
    </nets>
    <settings>

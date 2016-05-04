@@ -21,7 +21,7 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="seq/seq_clk_midi" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_midi_1" x="140" y="84">
+   <obj type="drj/seq/seq_clk_sync" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_midi_1" x="140" y="84">
       <params>
          <int32 name="clockdiv" value="12"/>
          <bool32.tgl name="miditransport" value="0"/>
@@ -118,22 +118,24 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="./simple_syn" uuid="fd94ea9c-1380-423a-8001-ba9cd9bda19f" name="simple_syn_2" x="952" y="84">
+   <obj type="simple_syn" uuid="fd94ea9c-1380-423a-8001-ba9cd9bda19f" name="simple_syn_2" x="952" y="84">
       <params>
-         <frac32.s.map name="vcf3_1:pitch" value="-40.0"/>
-         <frac32.u.map name="vcf3_1:reso" value="36.0"/>
-         <frac32.s.map name="adsr_2:a" value="-10.0"/>
-         <frac32.s.map name="adsr_2:d" value="17.0"/>
-         <frac32.u.map name="adsr_2:s" value="25.5"/>
-         <frac32.s.map name="adsr_2:r" value="-11.0"/>
-         <frac32.s.map name="adsr_1:a" value="-15.0"/>
-         <frac32.s.map name="adsr_1:d" value="6.0"/>
-         <frac32.u.map name="adsr_1:s" value="44.0"/>
-         <frac32.s.map name="adsr_1:r" value="-18.0"/>
+         <frac32.s.map name="osc" value="0.0"/>
+         <frac32.s.map name="pw" value="0.0"/>
+         <frac32.s.map name="vcf:pitch" value="-40.0"/>
+         <frac32.u.map name="vcf:reso" value="36.0"/>
+         <frac32.s.map name="fenv:a" value="14.0"/>
+         <frac32.s.map name="fenv:d" value="0.0"/>
+         <frac32.u.map name="fenv:s" value="33.5"/>
+         <frac32.s.map name="fenv:r" value="24.0"/>
+         <frac32.s.map name="aenv:a" value="0.0"/>
+         <frac32.s.map name="aenv:d" value="0.0"/>
+         <frac32.u.map name="aenv:s" value="33.0"/>
+         <frac32.s.map name="aenv:r" value="24.0"/>
       </params>
       <attribs/>
    </obj>
-   <obj type="./delay_st_pp" uuid="a5a91366-fb17-46f4-a033-a8b5a206e87c" name="delay_st_pp_2" x="1092" y="84">
+   <obj type="delay_st_pp" uuid="a5a91366-fb17-46f4-a033-a8b5a206e87c" name="delay_st_pp_2" x="1092" y="84">
       <params>
          <bool32.tgl name="pre_filter" value="1"/>
          <frac32.u.map name="lp" value="64.0"/>
@@ -142,7 +144,7 @@
          <frac32.u.map name="ping" value="64.0"/>
          <frac32.u.map name="feedback" value="33.5"/>
          <frac32.u.map name="time" value="24.0"/>
-         <frac32.u.map name="time_diff" value="41.0"/>
+         <frac32.s.map name="time_diff" value="41.0"/>
          <frac32.u.map name="dry wet" value="32.0"/>
       </params>
       <attribs/>
@@ -181,41 +183,41 @@
       <attribs/>
    </obj>
    <comment type="patch/comment" x="28" y="546" text="Start/stop the external ckock"/>
-   <comment type="patch/comment" x="770" y="546" text="Pitch control from MIDI keyboard and transpose dial, with glide"/>
    <obj type="phi/switch/sw 1-2b" uuid="890a7a6fd3eda48e1100a9b9462a2678381f23c1" name="sw_1" x="28" y="574">
       <params>
          <bool32.tgl name="s" value="1"/>
       </params>
       <attribs/>
    </obj>
-   <obj type="ctrl/dial_pitch" uuid="86ae7d7f49093cb1c94aed72274d118a23d46692" name="dial_pitch_1" x="770" y="574">
-      <params>
-         <frac32.s.map name="pitch" value="0.0"/>
-      </params>
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_2" x="1204" y="588">
+      <params/>
       <attribs/>
    </obj>
-   <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="glide on/off" x="882" y="574">
-      <params>
-         <bool32.tgl name="b" value="0"/>
-      </params>
-      <attribs/>
-   </obj>
-   <obj type="math/glide_fast" uuid="109032422cc8ebfd6e03c6b92f41115e3172dad9" name="glide_fast_1" x="966" y="574">
+   <comment type="patch/comment" x="770" y="602" text="Pitch control from MIDI keyboard and transpose dial, with glide"/>
+   <obj type="drj/math/glide_fast" uuid="109032422cc8ebfd6e03c6b92f41115e3172dad9" name="glide_fast_1" x="966" y="616">
       <params>
          <frac32.s.map name="time" value="-26.0"/>
       </params>
       <attribs/>
    </obj>
-   <obj type="midi/in/keyb" uuid="53b04874696932f38aceaa168bd5d9efb743716d" name="keyb_1" x="1078" y="574">
+   <obj type="midi/in/keyb" uuid="53b04874696932f38aceaa168bd5d9efb743716d" name="keyb_1" x="1092" y="616">
       <params/>
       <attribs/>
    </obj>
-   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_2" x="1190" y="574">
+   <obj type="drj/ctrl/dial_pitch" uuid="86ae7d7f49093cb1c94aed72274d118a23d46692" name="dial_pitch_1" x="770" y="644">
+      <params>
+         <frac32.s.map name="pitch" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_1" x="1204" y="658">
       <params/>
       <attribs/>
    </obj>
-   <obj type="math/+" uuid="44553fdc8628c67ab535845ed1be304ad6c9553b" name="+_1" x="1190" y="644">
-      <params/>
+   <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="glide on/off" x="882" y="672">
+      <params>
+         <bool32.tgl name="b" value="0"/>
+      </params>
       <attribs/>
    </obj>
    <nets>
@@ -340,6 +342,6 @@
       <x>415</x>
       <y>106</y>
       <width>1392</width>
-      <height>868</height>
+      <height>928</height>
    </windowPos>
 </patch-1.0>
