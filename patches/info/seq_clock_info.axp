@@ -1,0 +1,76 @@
+<patch-1.0 appVersion="1.0.9">
+   <comment type="patch/comment" x="224" y="14" text="Basic sequencer controller"/>
+   <obj type="drj/seq/seq_clk" uuid="de6909eb611b13af5b43f97484c130024b3a4793" name="seq_clk_1" x="224" y="42">
+      <params>
+         <frac32.s.map name="tempo" value="0.0"/>
+         <frac32.u.map name="gatelength" value="32.0"/>
+         <int32 name="seqlength" value="8"/>
+      </params>
+      <attribs/>
+   </obj>
+   <comment type="patch/comment" x="112" y="70" text="Tempo modulation"/>
+   <comment type="patch/comment" x="364" y="70" text="Step number"/>
+   <comment type="patch/comment" x="84" y="84" text="Gate length modulation"/>
+   <comment type="patch/comment" x="364" y="84" text="Gate"/>
+   <comment type="patch/comment" x="154" y="98" text="Run/stop"/>
+   <comment type="patch/comment" x="364" y="98" text="Step clock"/>
+   <comment type="patch/comment" x="112" y="112" text="Reverse playback"/>
+   <comment type="patch/comment" x="364" y="112" text="Start pulse, on first step"/>
+   <comment type="patch/comment" x="70" y="126" text="Play alternating up and down"/>
+   <comment type="patch/comment" x="14" y="140" text="Repeat end steps for up and down mode"/>
+   <comment type="patch/comment" x="112" y="154" text="Reset on next step"/>
+   <comment type="patch/comment" x="112" y="168" text="Reset immediately"/>
+   <comment type="patch/comment" x="364" y="196" text="Internal clock"/>
+   <comment type="patch/comment" x="364" y="224" text="Gate length"/>
+   <comment type="patch/comment" x="364" y="252" text="Sequence length, 1-64"/>
+   <comment type="patch/comment" x="224" y="294" text="Syncable sequncer controller"/>
+   <obj type="drj/seq/seq_clk_sync" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_midi_1" x="224" y="322">
+      <params>
+         <int32 name="clockdiv" value="12"/>
+         <bool32.tgl name="miditransport" value="0"/>
+         <frac32.s.map name="tempo" value="0.0"/>
+         <frac32.u.map name="gatelength" value="32.0"/>
+         <int32 name="seqlength" value="8"/>
+      </params>
+      <attribs>
+         <combo attributeName="clocksource" selection="Internal"/>
+         <combo attributeName="device" selection="omni"/>
+      </attribs>
+   </obj>
+   <comment type="patch/comment" x="28" y="350" text="Tempo modulation for internal clock"/>
+   <comment type="patch/comment" x="378" y="350" text="Step number"/>
+   <comment type="patch/comment" x="84" y="364" text="Gate length modulation"/>
+   <comment type="patch/comment" x="378" y="364" text="Gate"/>
+   <comment type="patch/comment" x="154" y="378" text="Run/stop"/>
+   <comment type="patch/comment" x="378" y="378" text="Step clock"/>
+   <comment type="patch/comment" x="112" y="392" text="Reverse playback"/>
+   <comment type="patch/comment" x="378" y="392" text="Start pulse, on first step"/>
+   <comment type="patch/comment" x="70" y="406" text="Play alternating up and down"/>
+   <comment type="patch/comment" x="378" y="406" text="external/MIDI 24PPQ clock"/>
+   <comment type="patch/comment" x="14" y="420" text="Repeat end steps for up and down mode"/>
+   <comment type="patch/comment" x="112" y="434" text="First step number"/>
+   <comment type="patch/comment" x="28" y="448" text="Last step number when seqlength = 0"/>
+   <comment type="patch/comment" x="112" y="462" text="Reset on next step"/>
+   <comment type="patch/comment" x="112" y="476" text="Reset immediately"/>
+   <comment type="patch/comment" x="42" y="490" text="Override the clock source attribute"/>
+   <comment type="patch/comment" x="42" y="504" text="Override the clock divider attribute"/>
+   <comment type="patch/comment" x="70" y="518" text="External clock input, 24PPQ"/>
+   <comment type="patch/comment" x="378" y="532" text="Clock  source, internal, external, MIDI"/>
+   <comment type="patch/comment" x="378" y="546" text="MIDI device"/>
+   <comment type="patch/comment" x="378" y="560" text="external/MIDI clock divider, 1-48"/>
+   <comment type="patch/comment" x="378" y="574" text="Obey MIDI transport"/>
+   <comment type="patch/comment" x="378" y="602" text="Internal clock"/>
+   <comment type="patch/comment" x="378" y="630" text="Gate length"/>
+   <comment type="patch/comment" x="378" y="658" text="Sequence length, 1-64"/>
+   <nets/>
+   <settings>
+      <subpatchmode>no</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+   <windowPos>
+      <x>674</x>
+      <y>124</y>
+      <width>666</width>
+      <height>837</height>
+   </windowPos>
+</patch-1.0>

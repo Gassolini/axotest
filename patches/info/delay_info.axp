@@ -1,0 +1,102 @@
+<patch-1.0 appVersion="1.0.9">
+   <comment type="patch/comment" x="126" y="14" text="------- Stereo delay sub patches -------"/>
+   <comment type="patch/comment" x="420" y="28" text="clk_select =&gt; 0 = default (internal), 0,1,2,3,4 = internal, 24ppq input, midi, midi-omni"/>
+   <comment type="patch/comment" x="420" y="42" text="clk_div =&gt; 0 = internal setting, 1..N = clk_div input value"/>
+   <comment type="patch/comment" x="420" y="56" text="24ppq =&gt; external clock input - does not have to be 24ppq... can be used fro tap tempo"/>
+   <comment type="patch/comment" x="126" y="84" text="Stereo/ping-pong"/>
+   <comment type="patch/comment" x="266" y="84" text="Stereo/ping-pong"/>
+   <comment type="patch/comment" x="420" y="84" text="Stereo/ping-pong syncable"/>
+   <comment type="patch/comment" x="588" y="84" text="Stereo/ping-pong syncable"/>
+   <comment type="patch/comment" x="266" y="98" text="with modulation"/>
+   <comment type="patch/comment" x="588" y="98" text="with modulation"/>
+   <obj type="delay_st_pp" uuid="1dfc6b4a-01a2-4bdc-a139-f60803f34263" name="delay_st_pp_1" x="126" y="126">
+      <params>
+         <bool32.tgl name="pre_filter" value="0"/>
+         <frac32.u.map name="lp" value="64.0"/>
+         <frac32.u.map name="hp" value="0.0"/>
+         <bool32.tgl name="hp_enable" value="0"/>
+         <frac32.u.map name="ping" value="0.0"/>
+         <frac32.u.map name="feedback" value="32.0"/>
+         <frac32.u.map name="time" value="32.0"/>
+         <frac32.s.map name="time_diff" value="2.0"/>
+         <frac32.u.map name="dry wet" value="32.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="delay_st_pp_mod" uuid="badd379d-3305-49bb-ab50-9252b594fd0e" name="delay_st_pp_mod_1" x="266" y="126">
+      <params>
+         <bool32.tgl name="pre_filter" value="0"/>
+         <frac32.u.map name="lp" value="64.0"/>
+         <frac32.u.map name="hp" value="0.0"/>
+         <bool32.tgl name="hp_enable" value="0"/>
+         <frac32.u.map name="ping" value="0.0"/>
+         <frac32.u.map name="feedback" value="32.0"/>
+         <frac32.u.map name="time" value="32.0"/>
+         <frac32.s.map name="time_diff" value="2.0"/>
+         <frac32.u.map name="mod amt" value="0.0"/>
+         <frac32.s.map name="mod freq" value="0.0"/>
+         <frac32.s.map name="mod phase" value="0.0"/>
+         <frac32.u.map name="dry wet" value="32.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="delay_st_pp_sync" uuid="b6121739-20b9-4de5-a9c0-352fee638462" name="delay_st_pp_sync_1" x="420" y="126">
+      <params>
+         <bool32.tgl name="pre_filter" value="0"/>
+         <frac32.u.map name="lp" value="64.0"/>
+         <frac32.u.map name="hp" value="0.0"/>
+         <bool32.tgl name="hp_enable" value="0"/>
+         <frac32.u.map name="ping" value="0.0"/>
+         <frac32.u.map name="feedback" value="32.0"/>
+         <frac32.u.map name="time" value="32.0"/>
+         <frac32.s.map name="time_diff" value="0.0"/>
+         <frac32.u.map name="dry wet" value="32.0"/>
+         <int32 name="left:clockdiv" value="1"/>
+         <int32 name="rigth:clockdiv" value="1"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="delay_st_pp_mod_sync" uuid="baafb99d-67b9-476a-8ad6-255747c106fa" name="delay_st_pp_mod_sync_1" x="588" y="126">
+      <params>
+         <bool32.tgl name="pre_filter" value="0"/>
+         <frac32.u.map name="lp" value="64.0"/>
+         <frac32.u.map name="hp" value="0.0"/>
+         <bool32.tgl name="hp_enable" value="0"/>
+         <frac32.u.map name="ping" value="0.0"/>
+         <frac32.u.map name="feedback" value="32.0"/>
+         <frac32.u.map name="time" value="32.0"/>
+         <frac32.s.map name="time_diff" value="0.0"/>
+         <frac32.u.map name="mod amt" value="0.0"/>
+         <frac32.s.map name="mod freq" value="0.0"/>
+         <frac32.s.map name="mod phase" value="0.0"/>
+         <frac32.u.map name="dry wet" value="32.0"/>
+         <int32 name="left:clockdiv" value="1"/>
+         <int32 name="right:clockdiv" value="1"/>
+      </params>
+      <attribs/>
+   </obj>
+   <comment type="patch/comment" x="728" y="224" text="Input filtered befor delay"/>
+   <comment type="patch/comment" x="728" y="238" text="low pass filter"/>
+   <comment type="patch/comment" x="728" y="280" text="high pass filter"/>
+   <comment type="patch/comment" x="728" y="308" text="high pass filter enable"/>
+   <comment type="patch/comment" x="728" y="322" text="steero/pin-pong morph"/>
+   <comment type="patch/comment" x="728" y="364" text="feedback gain"/>
+   <comment type="patch/comment" x="728" y="406" text="internal time setting"/>
+   <comment type="patch/comment" x="728" y="434" text="left/right time difference"/>
+   <comment type="patch/comment" x="728" y="476" text="modulation amount"/>
+   <comment type="patch/comment" x="728" y="518" text="modulation frequency"/>
+   <comment type="patch/comment" x="728" y="546" text="left/right phase difference"/>
+   <comment type="patch/comment" x="728" y="588" text="dry wet mix"/>
+   <comment type="patch/comment" x="728" y="616" text="clock dividers"/>
+   <nets/>
+   <settings>
+      <subpatchmode>no</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+   <windowPos>
+      <x>25</x>
+      <y>3</y>
+      <width>982</width>
+      <height>854</height>
+   </windowPos>
+</patch-1.0>

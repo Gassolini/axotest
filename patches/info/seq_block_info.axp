@@ -1,9 +1,10 @@
 <patch-1.0 appVersion="1.0.9">
    <comment type="patch/comment" x="196" y="14" text="Chainable sequencer modeules in 4, 8 and 18 steps"/>
-   <comment type="patch/comment" x="42" y="42" text="PItch sequncer"/>
-   <comment type="patch/comment" x="196" y="42" text="Unipolar valu0e sequncer"/>
-   <comment type="patch/comment" x="336" y="42" text="Bipolar value sequncer"/>
+   <comment type="patch/comment" x="42" y="42" text="PItch sequencer"/>
+   <comment type="patch/comment" x="196" y="42" text="Unipolar value sequencer"/>
+   <comment type="patch/comment" x="336" y="42" text="Bipolar value sequencer"/>
    <comment type="patch/comment" x="476" y="42" text="Step enable sequencer"/>
+   <comment type="patch/comment" x="644" y="42" text="Syncable pattern selector"/>
    <obj type="drj/seq/stepseq_4_pitch" uuid="aa0848ea71ef03f595a32f0c14bff9cab097294701" name="stepseq_4_pitch_1" x="42" y="70">
       <params>
          <frac32.s.map name="p1" value="0.0"/>
@@ -40,6 +41,16 @@
       </params>
       <attribs/>
    </obj>
+   <obj type="drj/seq/pattern_selector" uuid="481b31a2a11930c14bff9213fd35ecffaa2947ac" name="pattern_selector_1" x="644" y="70">
+      <params>
+         <bool32.tgl name="extpattern" value="0"/>
+         <bool32.tgl name="syncclock" value="0"/>
+         <bool32.tgl name="syncstart" value="0"/>
+         <bool32.tgl name="mute" value="0"/>
+         <int32.hradio name="pattern" value="0"/>
+      </params>
+      <attribs/>
+   </obj>
    <nets/>
    <settings>
       <subpatchmode>no</subpatchmode>
@@ -48,7 +59,7 @@
    <windowPos>
       <x>222</x>
       <y>105</y>
-      <width>748</width>
-      <height>691</height>
+      <width>890</width>
+      <height>631</height>
    </windowPos>
 </patch-1.0>

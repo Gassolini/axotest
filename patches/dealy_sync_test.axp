@@ -8,20 +8,20 @@
       </params>
       <attribs/>
    </obj>
-   <obj type="simple_syn" uuid="263f2f40-286b-48b5-b387-1b6276e154bf" name="simple_syn_1" x="126" y="42">
+   <obj type="./simple_syn" uuid="7bfcfccb-f5e1-44da-b62d-f3e52acc4da1" name="simple_syn_2" x="140" y="42">
       <params>
-         <frac32.s.map name="osc" value="-20.0"/>
+         <frac32.s.map name="osc" value="0.0"/>
          <frac32.s.map name="pw" value="0.0"/>
-         <frac32.s.map name="vcf:pitch" value="-28.0"/>
-         <frac32.u.map name="vcf:reso" value="0.0"/>
-         <frac32.s.map name="fenv:a" value="-64.0"/>
-         <frac32.s.map name="fenv:d" value="-64.0"/>
-         <frac32.u.map name="fenv:s" value="64.0"/>
-         <frac32.s.map name="fenv:r" value="-64.0"/>
-         <frac32.s.map name="aenv:a" value="-64.0"/>
-         <frac32.s.map name="aenv:d" value="16.0"/>
-         <frac32.u.map name="aenv:s" value="0.0"/>
-         <frac32.s.map name="aenv:r" value="-64.0"/>
+         <frac32.s.map name="vcf:pitch" value="-40.0"/>
+         <frac32.u.map name="vcf:reso" value="36.0"/>
+         <frac32.s.map name="fenv:a" value="14.0"/>
+         <frac32.s.map name="fenv:d" value="0.0"/>
+         <frac32.u.map name="fenv:s" value="33.5"/>
+         <frac32.s.map name="fenv:r" value="24.0"/>
+         <frac32.s.map name="aenv:a" value="0.0"/>
+         <frac32.s.map name="aenv:d" value="0.0"/>
+         <frac32.u.map name="aenv:s" value="33.0"/>
+         <frac32.s.map name="aenv:r" value="24.0"/>
       </params>
       <attribs/>
    </obj>
@@ -160,8 +160,8 @@
       </net>
       <net>
          <source obj="square_2" outlet="wave"/>
-         <dest obj="simple_syn_1" inlet="gate"/>
-         <dest obj="simple_syn_1" inlet="velo"/>
+         <dest obj="simple_syn_2" inlet="gate"/>
+         <dest obj="simple_syn_2" inlet="velo"/>
       </net>
       <net>
          <source obj="read_sync_1" outlet="out"/>
@@ -174,12 +174,7 @@
       </net>
       <net>
          <source obj="*c_1" outlet="out"/>
-         <dest obj="simple_syn_1" inlet="pitch"/>
-      </net>
-      <net>
-         <source obj="simple_syn_1" outlet="out"/>
-         <dest obj="*c_2" inlet="in"/>
-         <dest obj="*c_3" inlet="in"/>
+         <dest obj="simple_syn_2" inlet="pitch"/>
       </net>
       <net>
          <source obj="*c_2" outlet="out"/>
@@ -247,6 +242,11 @@
       <net>
          <source obj="dial_4" outlet="out"/>
          <dest obj="read_sync_1" inlet="time"/>
+      </net>
+      <net>
+         <source obj="simple_syn_2" outlet="out"/>
+         <dest obj="*c_2" inlet="in"/>
+         <dest obj="*c_3" inlet="in"/>
       </net>
    </nets>
    <settings>

@@ -1,0 +1,59 @@
+<patch-1.0 appVersion="1.0.9">
+   <comment type="patch/comment" x="182" y="28" text="Syncable delay, Internal/External/MIDI"/>
+   <obj type="drj/delay/read_sync" uuid="9abca43569373145e559ad309eaf65a47b14cb54" name="read_sync_1" x="196" y="56">
+      <params>
+         <int32 name="clockdiv" value="12"/>
+         <frac32.u.map name="time" value="31.5"/>
+      </params>
+      <attribs>
+         <objref attributeName="delayname" obj=""/>
+         <combo attributeName="clocksource" selection="External"/>
+         <combo attributeName="device" selection="omni"/>
+      </attribs>
+   </obj>
+   <comment type="patch/comment" x="126" y="84" text="Time bias"/>
+   <comment type="patch/comment" x="364" y="84" text="Audio out"/>
+   <comment type="patch/comment" x="84" y="98" text="Time modularion"/>
+   <comment type="patch/comment" x="14" y="112" text="Override the clock source attribute"/>
+   <comment type="patch/comment" x="14" y="126" text="Override the clock divider attribute"/>
+   <comment type="patch/comment" x="42" y="140" text="External clock, or tap tempo"/>
+   <comment type="patch/comment" x="364" y="154" text="Delay writer reference"/>
+   <comment type="patch/comment" x="364" y="168" text="Clock source,Iinternal/External/MIDI"/>
+   <comment type="patch/comment" x="364" y="182" text="MIDI device"/>
+   <comment type="patch/comment" x="364" y="196" text="Clock divider"/>
+   <comment type="patch/comment" x="364" y="224" text="Internal delay time"/>
+   <comment type="patch/comment" x="154" y="280" text="Syncable inter5polated delay, Internal/External/MIDI"/>
+   <obj type="drj/delay/read_interp_sync" uuid="e3d8b551c58865958823ab20186cc25ccf0466c7" name="read_interp_sync_1" x="196" y="308">
+      <params>
+         <int32 name="clockdiv" value="12"/>
+         <frac32.u.map name="time" value="32.0"/>
+      </params>
+      <attribs>
+         <objref attributeName="delayname" obj=""/>
+         <combo attributeName="clocksource" selection="Internal"/>
+         <combo attributeName="device" selection="omni"/>
+      </attribs>
+   </obj>
+   <comment type="patch/comment" x="126" y="336" text="Time bias"/>
+   <comment type="patch/comment" x="364" y="336" text="Audio out"/>
+   <comment type="patch/comment" x="84" y="350" text="Time modularion"/>
+   <comment type="patch/comment" x="14" y="364" text="Override the clock source attribute"/>
+   <comment type="patch/comment" x="14" y="378" text="Override the clock divider attribute"/>
+   <comment type="patch/comment" x="42" y="392" text="External clock, or tap tempo"/>
+   <comment type="patch/comment" x="364" y="406" text="Delay writer reference"/>
+   <comment type="patch/comment" x="364" y="420" text="Clock source,Iinternal/External/MIDI"/>
+   <comment type="patch/comment" x="364" y="434" text="MIDI device"/>
+   <comment type="patch/comment" x="364" y="448" text="Clock divider"/>
+   <comment type="patch/comment" x="364" y="476" text="Internal delay time"/>
+   <nets/>
+   <settings>
+      <subpatchmode>no</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+   <windowPos>
+      <x>1093</x>
+      <y>128</y>
+      <width>789</width>
+      <height>708</height>
+   </windowPos>
+</patch-1.0>

@@ -1,0 +1,148 @@
+<objdefs appVersion="1.0.9">
+  <obj.normal id="stepseq_midi" uuid="aa0848ea71ef03f59cab09729475a32f0c14bff901">
+    <sDescription>Step sequencer, midi notes x 4</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <inlets>
+      <int32 name="step" description="Step select input"/>
+      <bool32 name="gate" description="Gate input"/>
+    </inlets>
+    <outlets>
+      <int32  name="chain"  description="Chain step output"/>
+      <bool32 name="gate"   description="Gate output"/>
+      <frac32 name="note"   description="Pitch output"/>
+      <frac32 name="velo"   description="Velocity output"/>
+    </outlets>
+    <displays>
+      <int32.label name="recstep  "/>
+    </displays>
+    <params>
+      <int32 name="channel" description="midi channel">
+        <MinValue i="1"/>
+        <MaxValue i="16"/>
+      </int32>
+      <int32 name="pattern" description="pattern number">
+        <MinValue i="1"/>
+        <MaxValue i="16"/>
+      </int32>
+      <bool32.mom name="save"   description="Save sequence data"/>
+      <bool32.mom name="load"   description="Load sequence data"/>
+      <bool32.tgl name="sync"   description="Record position synced to current step"/>
+      <bool32.tgl name="record" description="Record midi notes"/>
+    </params>
+    <attribs>
+      <spinner name="seqlength" MinValue="1" MaxValue="16" DefaultValue="4"/>
+    </attribs>
+    <code.declaration><![CDATA[
+
+      int8_t  _note;
+      int32_t _gate;
+      uint8_t _velo;
+      uint8_t midichannel;
+      int32_t current_step;
+      int32_t record_step;
+      int32_t old_record;
+      int32_t old_save;
+      int32_t old_load;
+      uint8_t notetab[16];
+      uint8_t velotab[16];
+
+    ]]></code.declaration>
+    <code.init><![CDATA[
+
+      _gate        = 0;
+      midichannel  = 0;
+      current_step = 0;
+      record_step  = 0;
+      old_record   = 0;
+
+    ]]></code.init>
+    <code.krate><![CDATA[
+
+      midichannel  = param_channel - 1;
+      current_step = inlet_step;
+
+
+      if( param_save && !old_save )
+        {
+        }
+      else if( param_load && !old_load )
+        {
+        }
+
+
+      // Start of recording
+      if( param_record && !old_record )
+        {
+          record_step = 0;
+          disp_recstep = 0; // Record armed
+        }
+
+      // Record notes
+      if( param_record && _gate )
+        {
+          if( param_sync && current_step > 0 && current_step < attr_seqlength )
+            {
+              notetab[current_step] = _note;
+              velotab[current_step] = _velo;
+              disp_recstep = current_step  + 1;
+            }
+          else
+            {
+              notetab[record_step] = _note;
+              velotab[record_step] = _velo;
+              record_step++;
+              disp_recstep = record_step;
+              if( record_step >= attr_seqlength )
+                record_step = 0;
+            }
+        }
+      else
+        {
+          disp_recstep = -1; // Not recording
+        }
+
+      // Play notes
+      if( current_step > 0 && current_step < attr_seqlength )
+        {
+          outlet_note  = notetab[current_step]<<21;  // _note<<21;
+          outlet_velo  = velotab[current_step]<<20;  // _velo<<20;
+          outlet_gate  = inlet_gate;
+        }
+      else
+        {
+          outlet_note  = 0;
+          outlet_velo  = 0;
+          outlet_gate  = 0;
+        }
+
+      outlet_chain = inlet_step - attr_seqlength;
+      old_record   = param_record;
+      _gate        = 0;
+
+    ]]></code.krate>
+    <code.midihandler><![CDATA[
+
+      if( (status == MIDI_NOTE_ON + midichannel) && (data2) )
+        {
+          _velo = data2;
+          _note = data1-64;
+          _gate = 1;
+        }
+      else if(   ((status == MIDI_NOTE_ON + midichannel) && (!data2))
+              || (status == MIDI_NOTE_OFF + midichannel)
+             )
+        {
+          if(_note == data1-64 )
+            {
+              _gate = 0;
+            }
+        }
+      else if( (status == midichannel + MIDI_CONTROL_CHANGE) && (data1 == MIDI_C_ALL_NOTES_OFF) )
+        {
+          _gate = 0;
+        }
+
+  ]]></code.midihandler>
+  </obj.normal>
+</objdefs>
