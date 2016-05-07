@@ -10,7 +10,7 @@
     <outlets>
       <int32  name="chain"  description="Chain step output"/>
       <bool32 name="gate"   description="Gate output"/>
-      <frac32 name="note"   description="Pitch output"/>
+      <frac32 name="pitch"  description="Pitch output"/>
       <frac32 name="velo"   description="Velocity output"/>
     </outlets>
     <displays>
@@ -35,17 +35,18 @@
     </attribs>
     <code.declaration><![CDATA[
 
-      int8_t  _note;
-      int32_t _gate;
-      uint8_t _velo;
-      uint8_t midichannel;
-      int32_t current_step;
-      int32_t record_step;
-      int32_t old_record;
-      int32_t old_save;
-      int32_t old_load;
-      uint8_t notetab[16];
-      uint8_t velotab[16];
+      int8_t   _note;
+      int32_t  _gate;
+      uint8_t  _velo;
+      uint8_t  midichannel;
+      int32_t  current_step;
+      int32_t  record_step;
+      int32_t  old_record;
+      int32_t  old_save;
+      int32_t  old_load;
+      int8_t   notetab[16];
+      int8_t   velotab[16];
+      int32_t  old_pitch;
 
     ]]></code.declaration>
     <code.init><![CDATA[
@@ -55,6 +56,11 @@
       current_step = 0;
       record_step  = 0;
       old_record   = 0;
+      old_pitch    = 0;
+      for( int i = 0; i < 16; i++ )
+        {
+          notetab[i] = -1;
+        }
 
     ]]></code.init>
     <code.krate><![CDATA[
@@ -76,7 +82,11 @@
         {
           record_step = 0;
           disp_recstep = 0; // Record armed
-        }
+          for( int i = 0; i < 16; i++ )
+            {
+              notetab[i] = -1;
+            }
+       }
 
       // Record notes
       if( param_record && _gate )
@@ -103,21 +113,22 @@
         }
 
       // Play notes
-      if( current_step > 0 && current_step < attr_seqlength )
+      if( current_step > 0 && current_step < attr_seqlength && notetab[current_step] >= 0 )
         {
-          outlet_note  = notetab[current_step]<<21;  // _note<<21;
+          outlet_pitch = notetab[current_step]<<21;  // _note<<21;
           outlet_velo  = velotab[current_step]<<20;  // _velo<<20;
           outlet_gate  = inlet_gate;
         }
       else
         {
-          outlet_note  = 0;
+          outlet_pitch = old_pitch;
           outlet_velo  = 0;
           outlet_gate  = 0;
         }
 
       outlet_chain = inlet_step - attr_seqlength;
       old_record   = param_record;
+      old_pitch    = outlet_pitch;
       _gate        = 0;
 
     ]]></code.krate>
