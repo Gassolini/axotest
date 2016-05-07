@@ -35,9 +35,7 @@
       <bool32.tgl name="overdub" description="Overdub mode, don't erase noted on new recording"/>
       <bool32.tgl name="record"  description="Record midi notes"/>
     </params>
-    <attribs>
-      <spinner name="seqlength" MinValue="1" MaxValue="16" DefaultValue="4"/>
-    </attribs>
+    <attribs/>
     <code.declaration><![CDATA[
 
       int8_t   _note;
@@ -99,7 +97,7 @@
       // Record notes
       if( param_record && _gate )
         {
-          if( param_sync && current_step > 0 && current_step < attr_seqlength )
+          if( param_sync && current_step > 0 && current_step < param_seqlength )
             {
               notetab[current_step] = _note;
               velotab[current_step] = _velo;
@@ -111,13 +109,13 @@
               velotab[record_step] = _velo;
               record_step++;
               disp_recstep = record_step;
-              if( record_step >= attr_seqlength )
+              if( record_step >= param_seqlength )
                 record_step = 0;
             }
         }
 
       // Play notes
-      if( current_step > 0 && current_step < attr_seqlength && velotab[current_step] > 0 )
+      if( current_step > 0 && current_step < param_seqlength && velotab[current_step] > 0 )
         {
           outlet_pitch = notetab[current_step]<<21;  // _note<<21;
           outlet_velo  = velotab[current_step]<<21;  // _velo<<20;
@@ -131,7 +129,7 @@
           outlet_gate  = 0;
         }
 
-      outlet_chain = inlet_step - attr_seqlength;
+      outlet_chain = inlet_step - param_seqlength;
       old_record   = param_record;
       old_pitch    = outlet_pitch;
       _gate        = 0;
