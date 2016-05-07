@@ -31,8 +31,9 @@
         <MinValue i="1"/>
         <MaxValue i="16"/>
       </int32>
-      <bool32.tgl name="sync"   description="Record position synced to current step"/>
-      <bool32.tgl name="record" description="Record midi notes"/>
+      <bool32.tgl name="sync"    description="Record position synced to current step"/>
+      <bool32.tgl name="overdub" description="Overdub mode, don't erase noted on new recording"/>
+      <bool32.tgl name="record"  description="Record midi notes"/>
     </params>
     <attribs>
       <spinner name="seqlength" MinValue="1" MaxValue="16" DefaultValue="4"/>
@@ -86,9 +87,12 @@
         {
           record_step = 0;
           disp_recstep = 0; // Record armed
-          for( int i = 0; i < 16; i++ )
+          if( !param_overdub )
             {
-              velotab[i] = 0;
+              for( int i = 0; i < 16; i++ )
+                {
+                  velotab[i] = 0;
+                }
             }
        }
 
@@ -110,10 +114,6 @@
               if( record_step >= attr_seqlength )
                 record_step = 0;
             }
-        }
-      else
-        {
-          //disp_recstep = -1; // Not recording
         }
 
       // Play notes
