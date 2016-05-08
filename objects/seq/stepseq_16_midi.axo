@@ -1,112 +1,473 @@
 <objdefs appVersion="1.0.9">
   <obj.normal id="stepseq_midi" uuid="aa0848ea71ef03f59cab09729475a32f0c14bff901">
-    <sDescription>Step sequencer, midi notes x 4</sDescription>
+    <sDescription>Step sequencer, midi recorder</sDescription>
     <author>Are Leistad</author>
     <license>BSD</license>
     <inlets>
-      <int32 name="step" description="Step select input"/>
-      <bool32 name="gate" description="Gate input"/>
+      <int32         name="step"    description="Step select input"/>
+      <bool32        name="gate"    description="Gate input"/>
+      <int32         name="pattern" description="Pattern number input"/>
+      <bool32.rising name="clock"   description="Clock pulse input"/>
+      <bool32.rising name="start"   description="Start pulse input"/>
+      <int32         name="preset"  description="Preset number"/>
+      <bool32.rising name="load"    description="Trigger to load preset"/>
+      <bool32.rising name="save"    description="Trigger to save preset"/>
+      <charptr32     name="prefix"  description="File name prefix"/>
     </inlets>
     <outlets>
-      <int32  name="chain"  description="Chain step output"/>
-      <bool32 name="gate"   description="Gate output"/>
-      <frac32 name="pitch"  description="Pitch output"/>
-      <frac32 name="velo"   description="Velocity output"/>
+      <int32  name="chain" description="Chain step output"/>
+      <bool32 name="gate"  description="Gate output"/>
+      <frac32 name="pitch" description="Pitch output"/>
+      <frac32 name="velo"  description="Velocity output"/>
+      <frac32 name="mod"   description="Modulation wheel output"/>
+      <int32  name="pattern" description="Current pattern number output"/>
+      <bool32.pulse name="switch"  description="Pattern switch pulse output"/>
+      <int32 name="preset" description="The current preset number"/>
+      <bool32.pulse name="load" description="Pulse signals loading"/>
+      <bool32.pulse name="save" description="Pulse signals saving"/>
     </outlets>
     <displays>
+      <int32.label name="preset  "/>
+      <int32.label name="pattern  "/>
       <int32.label name="recstep  "/>
     </displays>
     <params>
-      <int32 name="channel" description="midi channel">
+      <int32 name="channel" description="Midi channel">
         <MinValue i="1"/>
         <MaxValue i="16"/>
       </int32>
-      <int32 name="pattern" description="pattern number">
+      <bool32.mom name="save" description="Save sequence preset"/>
+      <int32 name="preset" description="Sequencee preset number to save or load">
+        <MinValue i="1"/>
+        <MaxValue i="999"/>
+      </int32>
+      <bool32.mom name="load" description="Load sequence preset "/>
+      <bool32.tgl name="extpattern" description="Use the pattern number input"/>
+      <bool32.tgl name="syncclock"  description="Pattern switches on next clock pulse"/>
+      <bool32.tgl name="syncstart"  description="Pattern switches on next start pulse"/>
+      <int32 name="pattern" description="Pattern number">
         <MinValue i="1"/>
         <MaxValue i="16"/>
       </int32>
-      <bool32.mom name="save" description="Save sequence data"/>
-      <bool32.mom name="load" description="Load sequence data"/>
       <int32 name="seqlength" description="Sequence length">
         <MinValue i="1"/>
         <MaxValue i="16"/>
       </int32>
-      <bool32.tgl name="sync"    description="Record position synced to current step"/>
-      <bool32.tgl name="overdub" description="Overdub mode, don't erase noted on new recording"/>
-      <bool32.tgl name="record"  description="Record midi notes"/>
+      <bool32.tgl name="mute"    description="Mutes the pattern outputs"/>
+      <bool32.tgl name="syncrec" description="Record position synced to current step"/>
+      <bool32.tgl name="overdub" description="Overdub mode, don't erase notes on new recordings"/>
+      <bool32.tgl name="record"  description="Record midi notes, goes round robin"/>
     </params>
-    <attribs/>
+    <attribs>
+      <combo name="device">
+        <MenuEntries>
+          <string>omni</string>
+          <string>din</string>
+          <string>usb host port 1</string>
+          <string>usb host port 2</string>
+          <string>usb host port 3</string>
+          <string>usb host port 4</string>
+          <string>internal port 1</string>
+          <string>internal port 2</string>
+          <string>usb device port 1</string>
+        </MenuEntries>
+        <CEntries>
+          <string>MIDI_DEVICE_OMNI, 0</string>
+          <string>MIDI_DEVICE_DIN, 1</string>
+          <string>MIDI_DEVICE_USB_HOST, 1</string>
+          <string>MIDI_DEVICE_USB_HOST, 2</string>
+          <string>MIDI_DEVICE_USB_HOST, 3</string>
+          <string>MIDI_DEVICE_USB_HOST, 4</string>
+          <string>MIDI_DEVICE_INTERNAL, 1</string>
+          <string>MIDI_DEVICE_INTERNAL, 2</string>
+          <string>MIDI_DEVICE_USB_DEVICE, 1</string>
+        </CEntries>
+      </combo>
+      <combo name="pgmchange">
+         <MenuEntries>
+            <string>Disabled</string>
+            <string>Enabled</string>
+         </MenuEntries>
+         <CEntries>
+            <string>0</string>
+            <string>1</string>
+         </CEntries>
+      </combo>
+      <!--spinner name="presetcc" MinValue="-1" MaxValue="127" DefaultValue="125"/-->
+      <!--spinner name="loadcc" MinValue="-1" MaxValue="127" DefaultValue="126"/-->
+      <!--spinner name="savecc" MinValue="-1" MaxValue="127" DefaultValue="-1"/-->
+      <!--spinner name="autoload" MinValue="-1" MaxValue="999" DefaultValue="-1"/-->
+    </attribs>
     <code.declaration><![CDATA[
 
-      int8_t   _note;
-      int32_t  _gate;
-      uint8_t  _velo;
-      uint8_t  midichannel;
-      int32_t  current_step;
-      int32_t  record_step;
-      int32_t  old_record;
-      int32_t  old_save;
-      int32_t  old_load;
-      int8_t   notetab[16];
-      uint8_t  velotab[16];
-      int32_t  old_pitch;
+      #define DEBUGF LogTextMessage
+      //#define DEBUGF(...) {}
+
+      #define STEPSEQ_MIDI_NOOF_PATTERNS  16
+      #define STEPSEQ_MIDI_NOOF_STEPS     16
+
+      int32_t     start_sequence;
+      const char  *prefix_copy;
+      const char  *suffix;
+      const char  *magic;
+      int32_t     preset_no;
+      int32_t     load_pulse;
+      int32_t     save_pulse;
+      int32_t     current_pattern;
+      int32_t     next_pattern;
+      int32_t     current_step;
+      int32_t     record_step;
+      int32_t     old_pitch;
+      int32_t     old_mod;
+      int32_t     old_inlet_clock;
+      int32_t     old_inlet_start;
+      int32_t     old_inlet_save;
+      int32_t     old_inlet_load;
+      int32_t     old_param_save;
+      int32_t     old_param_load;
+      int32_t     old_param_record;
+      int32_t     midi_preset_no;
+      int32_t     midi_load;
+      int8_t      midi_note;
+      int32_t     midi_gate;
+      uint8_t     midi_velo;
+      uint8_t     midi_modwheel;
+      uint8_t     midi_channel;
+
+      typedef int8_t NoteData[STEPSEQ_MIDI_NOOF_PATTERNS][STEPSEQ_MIDI_NOOF_STEPS][3];
+      NoteData *note_data;
+
+      __attribute__ (( always_inline )) __STATIC_INLINE int midi_device_test( midi_device_t dev, uint8_t port, int selected_dev, uint8_t selected_port )
+      {
+        if(    (selected_dev == MIDI_DEVICE_OMNI)
+            || (selected_dev == dev && selected_port == port)
+            )
+          return 1;
+        return 0;
+      }
+
+      void prepare_filename( char *filename, int buflen, const char *prefix, int preset_no )
+      {
+        int offset = 0;
+        if( prefix != NULL )
+          {
+            strncpy( filename, prefix, buflen );
+            offset = strlen( filename );
+          }
+        if( buflen >= offset + 4 )
+          {
+            filename[offset++] = '0' + (preset_no / 100) % 10;
+            filename[offset++] = '0' + (preset_no / 10) % 10;
+            filename[offset++] = '0' + preset_no % 10;
+            filename[offset]   = 0;
+          }
+        strncpy( filename + offset, suffix, buflen - offset );
+        filename[buflen-1]   = 0;
+      };
+
+      /*
+       *  Handle file errors by reporting an clsing the file
+       */
+
+      int file_error( FIL *FileObject, FRESULT err, const char *filename )
+      {
+        if( err != FR_OK )
+          report_fatfs_error( err, filename );
+        if( FileObject != NULL )
+          f_close( FileObject );
+        return -1;
+      }
+
+      int save_note_data( const char *prefix, int preset_no )
+      {
+        FRESULT       err;
+        FIL           FileObject;
+        unsigned int  bytes_written;
+        char          filename[64];
+
+        prepare_filename( filename, 64, prefix, preset_no );
+        err = f_open( &FileObject, filename, FA_WRITE | FA_CREATE_ALWAYS );
+        if( err != FR_OK )
+          return file_error( NULL, err, filename );
+
+        err = f_write( &FileObject, (uint8_t *) magic, sizeof( magic ), &bytes_written );
+        if( err != FR_OK )
+          return err;
+
+        err = f_write( &FileObject, (uint8_t *) *note_data, sizeof( *note_data ), &bytes_written );
+        if( err != FR_OK )
+          return err;
+
+        err = f_close( &FileObject );
+        if( err != FR_OK )
+          {
+            return file_error( NULL, err, filename );
+          }
+        LogTextMessage("Sequence data saved to '%s'", filename );
+        return 0;
+      }
+
+      int load_note_data( const char *prefix, int preset_no )
+      {
+        FRESULT           err;
+        FIL               FileObject;
+        unsigned int      bytes_read;
+        char              filename[64];
+        char              magic_test[4];
+
+        prepare_filename( filename, 64, prefix, preset_no );
+        err = f_open( &FileObject, filename, FA_READ | FA_OPEN_EXISTING );
+        if( err != FR_OK )
+          return file_error( NULL, err, filename );
+
+        err = f_read( &FileObject, magic_test, sizeof( magic_test ), &bytes_read );
+        if( err != FR_OK )
+          return file_error( &FileObject, err, filename );
+        for( int i = 0; i < 3; i++ )
+          {
+            if( magic_test[i] != magic[i] )
+              {
+                LogTextMessage("Sequence file id mismatch" );
+                return file_error( &FileObject, FR_OK, filename );
+              }
+          }
+
+        err = f_read( &FileObject, *note_data, sizeof( *note_data ), &bytes_read );
+        if( err != FR_OK )
+          return file_error( &FileObject, err, filename );
+
+        err = f_close( &FileObject );
+        if( err != FR_OK )
+          {
+            file_error( &FileObject, err, filename );
+            return -1;
+          }
+        LogTextMessage("Sequence data loaded from '%s'", filename );
+        return 0;
+      }
+
+      void clear_note_data( int32_t pattern )
+      {
+        int32_t max_pattern;
+        if( pattern == -1 )
+          {
+            max_pattern = STEPSEQ_MIDI_NOOF_PATTERNS;
+            pattern = 0;
+          }
+        else
+          {
+            max_pattern = pattern + 1;
+          }
+        for( ;pattern < max_pattern; pattern++ )
+          {
+             for( int step = 0; step < STEPSEQ_MIDI_NOOF_STEPS; step++ )
+              {
+                (*note_data)[pattern][current_step][1] = 0;
+              }
+          }
+      }
 
     ]]></code.declaration>
     <code.init><![CDATA[
 
-      _gate        = 0;
-      midichannel  = 0;
-      current_step = 0;
-      record_step  = 0;
-      old_record   = 0;
-      old_pitch    = 0;
-      for( int i = 0; i < 16; i++ )
-        {
-          velotab[i] = 0;
-        }
+      start_sequence    = 0;
+      prefix_copy       = "";
+      suffix            = ".snd";
+      magic             = "SND1";
+      preset_no         = 0;
+      load_pulse        = 0;
+      save_pulse        = 0;
+      current_pattern   = 0;
+      next_pattern      = -1;
+      current_step      = 0;
+      record_step       = 0;
+      old_pitch         = 0;
+      old_mod           = 0;
+      old_inlet_clock   = 0;
+      old_inlet_start   = 0;
+      old_inlet_save    = 0;
+      old_inlet_load    = 0;
+      old_param_save    = 0;
+      old_param_load    = 0;
+      old_param_record  = 0;
+      midi_load         = 0;
+      midi_gate         = 0;
+      midi_channel      = 0;
+
+      static NoteData _note_data __attribute__ ((section (".sdram")));
+      note_data = &_note_data;
+
+      clear_note_data( -1 );
 
     ]]></code.init>
     <code.krate><![CDATA[
 
-      midichannel  = param_channel - 1;
+      midi_channel = param_channel - 1;
       current_step = inlet_step;
 
-
-      if( param_save && !old_save )
+      if( start_sequence < 2 )
         {
+          if( start_sequence == 1 )
+            {
+              prefix_copy    = inlet_prefix;
+              preset_no      = param_preset;
+              disp_pattern   = current_pattern + 1;
+              //if( attr_autoload >= 0 )
+              //  {
+              //    DEBUGF("seqstep_midi::krate(): preset autoload" );
+              //    if( load_note_data( inlet_prefix, attr_autoload ) == FR_OK )
+              //      {
+              //        load_pulse = 1;
+              //        preset_no  = attr_autoload;
+              //      }
+              //  }
+              midi_preset_no = preset_no;
+            }
+          start_sequence++;
         }
-      else if( param_load && !old_load )
+      else if(   (inlet_load && !old_inlet_load)
+              || (!param_load && old_param_load)
+              || midi_load
+             )
         {
+          /*
+           *  Load triggered
+           */
+          DEBUGF("stepseq_midi::krate(): load_triggered");
+          int32_t preset_candidate;
+          if( midi_load )
+            {
+              preset_candidate = midi_preset_no;
+              midi_load = 0;
+            }
+          else if( !param_load && old_param_load )
+            {
+              preset_candidate = param_preset;
+            }
+          else
+            {
+              preset_candidate = inlet_preset;
+            }
+
+          if( load_note_data( inlet_prefix, preset_candidate ) == FR_OK )
+            {
+              load_pulse = 1;
+              preset_no  = preset_candidate;
+              //disp_preset = preset_no;
+            }
+        }
+      else if(   (inlet_save && !old_inlet_save)
+              || (!param_save && old_param_save)
+              //|| midi_save
+             )
+        {
+          /*
+           *  Save triggered
+           */
+          DEBUGF("stepseq_midi::krate(): save_triggered");
+          int32_t preset_candidate;
+          //if( midi_save )
+          //  {
+          //    preset_candidate = midi_preset_no;
+          //    midi_load = 0;
+          //  }
+          //else
+          if( !param_save && old_param_save )
+            {
+              preset_candidate = param_preset;
+            }
+          else
+            {
+              preset_candidate = inlet_preset;
+            }
+
+          if( save_note_data( inlet_prefix, preset_candidate ) == FR_OK )
+            {
+              save_pulse = 1;
+              preset_no  = preset_candidate;
+              //disp_preset = preset_no;
+            }
         }
 
+      //  Cue up the next pattern for playing
+
+      if( param_extpattern )
+        {
+          if( inlet_pattern != current_pattern )
+            {
+              next_pattern = inlet_pattern;
+            }
+        }
+      else if( param_pattern - 1 != current_pattern )
+        {
+          next_pattern = param_pattern - 1;
+        }
+
+      // Switch pattern according to the sync settings
+
+      outlet_switch = 0;
+      if( next_pattern != -1 && next_pattern != current_pattern )
+        {
+          bool do_switch = false;
+          if( param_syncclock )
+            {
+              if( inlet_clock && !old_inlet_clock )
+                {
+                  do_switch = true;
+                }
+            }
+          else if( param_syncstart )
+            {
+              if( inlet_start && !old_inlet_start )
+                {
+                  do_switch = true;
+                }
+            }
+          else
+            {
+              do_switch = true;
+            }
+
+          if( do_switch )
+            {
+              current_pattern = next_pattern;
+              disp_pattern    = current_pattern + 1;
+              next_pattern    = -1;
+              outlet_switch   = 1;
+            }
+        }
 
       // Start of recording
-      if( param_record && !old_record )
+      if( param_record && !old_param_record )
         {
+          DEBUGF("stepseq_midi::krate(): record enabled");
           record_step = 0;
           disp_recstep = 0; // Record armed
           if( !param_overdub )
             {
-              for( int i = 0; i < 16; i++ )
-                {
-                  velotab[i] = 0;
-                }
+              clear_note_data( current_pattern );
             }
        }
 
       // Record notes
-      if( param_record && _gate )
+      if( param_record && midi_gate )
         {
-          if( param_sync && current_step > 0 && current_step < param_seqlength )
+          if( param_syncrec && current_step > 0 && current_step < param_seqlength )
             {
-              notetab[current_step] = _note;
-              velotab[current_step] = _velo;
+              //notetab[current_step] = midi_note;
+              //velotab[current_step] = midi_velo;
+              (*note_data)[current_pattern][current_step][0] = midi_note;
+              (*note_data)[current_pattern][current_step][1] = midi_velo;
+              (*note_data)[current_pattern][current_step][2] = midi_modwheel;
               disp_recstep = current_step  + 1;
             }
           else
             {
-              notetab[record_step] = _note;
-              velotab[record_step] = _velo;
+              //notetab[record_step] = midi_note;
+              //velotab[record_step] = midi_velo;
+              (*note_data)[current_pattern][record_step][0] = midi_note;
+              (*note_data)[current_pattern][record_step][1] = midi_velo;
+              (*note_data)[current_pattern][record_step][2] = midi_modwheel;
               record_step++;
               disp_recstep = record_step;
               if( record_step >= param_seqlength )
@@ -115,46 +476,98 @@
         }
 
       // Play notes
-      if( current_step > 0 && current_step < param_seqlength && velotab[current_step] > 0 )
+      //if( current_step > 0 && current_step < param_seqlength && velotab[current_step] > 0 )
+      if(     current_step > 0
+          &&  current_step < param_seqlength
+          &&  (*note_data)[current_pattern][current_step][1] > 0
+          &&  !param_mute
+        )
         {
-          outlet_pitch = notetab[current_step]<<21;  // _note<<21;
-          outlet_velo  = velotab[current_step]<<21;  // _velo<<20;
-          //outlet_velo  = 127<<21;  // _velo<<20;
+          //outlet_pitch = notetab[current_step]<<21;
+          //outlet_velo  = velotab[current_step]<<21;
+          outlet_pitch = (*note_data)[current_pattern][current_step][0]<<21;
+          outlet_velo  = (*note_data)[current_pattern][current_step][1]<<21;
+          outlet_mod   = (*note_data)[current_pattern][current_step][2];
+
           outlet_gate  = inlet_gate;
         }
       else
         {
           outlet_pitch = old_pitch;
           outlet_velo  = 0;
+          outlet_mod   = old_mod;
           outlet_gate  = 0;
         }
 
-      outlet_chain = inlet_step - param_seqlength;
-      old_record   = param_record;
-      old_pitch    = outlet_pitch;
-      _gate        = 0;
+      outlet_chain    = inlet_step - param_seqlength;
+      outlet_pattern  = current_pattern;
+      old_pitch       = outlet_pitch;
+      old_mod         = outlet_mod;
+      old_inlet_clock = inlet_clock;
+      old_inlet_start = inlet_start;
+      old_inlet_save  = inlet_save;
+      old_inlet_load  = inlet_load;
+      old_param_save  = param_save;
+      old_param_load  = param_load;
+      old_param_record= param_record;
+      outlet_load     = load_pulse;
+      outlet_save     = save_pulse;
+      load_pulse      = 0;
+      save_pulse      = 0;
+      midi_gate       = 0;
+
+      disp_preset     = preset_no;
 
     ]]></code.krate>
     <code.midihandler><![CDATA[
 
-      if( (status == MIDI_NOTE_ON + midichannel) && (data2) )
+      if( midi_device_test( dev, port, attr_device ) == 1 )
         {
-          _velo = data2;
-          _note = data1-64;
-          _gate = 1;
-        }
-      else if(   ((status == MIDI_NOTE_ON + midichannel) && (!data2))
-              || (status == MIDI_NOTE_OFF + midichannel)
-             )
-        {
-          if(_note == data1-64 )
+          if( status == MIDI_CONTROL_CHANGE + midi_channel && data1 == MIDI_C_MODULATION )
             {
-              _gate = 0;
+              midi_modwheel = data2;
             }
-        }
-      else if( (status == midichannel + MIDI_CONTROL_CHANGE) && (data1 == MIDI_C_ALL_NOTES_OFF) )
-        {
-          _gate = 0;
+          else if( status == MIDI_PROGRAM_CHANGE + midi_channel && attr_pgmchange == 1 )
+            {
+              midi_preset_no = data1;
+              midi_load      = 1;
+            }
+#if 0
+          else if( status == attr_channel + MIDI_CONTROL_CHANGE )
+            {
+              if( data1 == attr_presetcc )
+                {
+                  midi_preset_no = data2;
+                }
+              else if( data1 == attr_loadcc )
+                {
+                  midi_load = 1;
+                }
+              else if( data1 == attr_savecc )
+                {
+                  midi_save = 1;
+                }
+            }
+#endif
+          else if( (status == MIDI_NOTE_ON + midi_channel) && (data2) )
+            {
+              midi_velo     = data2;
+              midi_note     = data1-64;
+              midi_gate = 1;
+            }
+          else if(   ((status == MIDI_NOTE_ON + midi_channel) && (!data2))
+                  || (status == MIDI_NOTE_OFF + midi_channel)
+                 )
+            {
+              if( midi_note == data1-64 )
+                {
+                  midi_gate = 0;
+                }
+            }
+          else if( (status == midi_channel + MIDI_CONTROL_CHANGE) && (data1 == MIDI_C_ALL_NOTES_OFF) )
+            {
+              midi_gate = 0;
+            }
         }
 
   ]]></code.midihandler>
