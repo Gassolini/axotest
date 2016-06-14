@@ -1,0 +1,229 @@
+<patch-1.0 appVersion="1.0.10">
+   <obj type="midi/nrpn_multi_rx" uuid="4aa087a1ef03fb294701ea7ffca595a32f0c1b0979" name="nrpn_multi_rx_1" x="42" y="14">
+      <params/>
+      <attribs>
+         <combo attributeName="device" selection="omni"/>
+         <spinner attributeName="channel" value="1"/>
+         <spinner attributeName="nrpn" value="128"/>
+      </attribs>
+   </obj>
+   <obj type="disp/chart b" uuid="d2bdf496f96ee521628490a038411210fbe29b15" name="chart_1" x="224" y="14">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/chart b" uuid="d2bdf496f96ee521628490a038411210fbe29b15" name="chart_2" x="294" y="14">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/kscope 128 b" uuid="e71f3dd9bc5b799ad703079e63fb929dd75def0" name="kscope_1" x="364" y="14">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/kscope 128 b" uuid="e71f3dd9bc5b799ad703079e63fb929dd75def0" name="kscope_2" x="504" y="14">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_1" x="224" y="140">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_2" x="266" y="140">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_3" x="224" y="196">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_4" x="266" y="196">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="midi/nrpn_multi2_rx" uuid="ca1087a1f303fb296701ea7afca595a12f0c1b16af" name="nrpn_multi2_rx_1" x="42" y="280">
+      <params/>
+      <attribs>
+         <combo attributeName="device" selection="omni"/>
+         <spinner attributeName="channel" value="1"/>
+      </attribs>
+   </obj>
+   <obj type="disp/chart b" uuid="d2bdf496f96ee521628490a038411210fbe29b15" name="chart_5" x="224" y="280">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/chart b" uuid="d2bdf496f96ee521628490a038411210fbe29b15" name="chart_6" x="294" y="280">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/kscope 128 b" uuid="e71f3dd9bc5b799ad703079e63fb929dd75def0" name="kscope_3" x="364" y="280">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/kscope 128 b" uuid="e71f3dd9bc5b799ad703079e63fb929dd75def0" name="kscope_4" x="504" y="280">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_5" x="224" y="406">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_6" x="266" y="406">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_7" x="224" y="462">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_8" x="266" y="462">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_9" x="322" y="462">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="midi/nrpn_f_rx" uuid="3fb294701e18a087a1e22a7ffca595a32f0c1b0100" name="nrpn_f_rx_1" x="42" y="560">
+      <params/>
+      <attribs>
+         <combo attributeName="device" selection="omni"/>
+         <spinner attributeName="channel" value="1"/>
+         <spinner attributeName="nrpn" value="128"/>
+      </attribs>
+   </obj>
+   <obj type="disp/chart b" uuid="d2bdf496f96ee521628490a038411210fbe29b15" name="chart_3" x="224" y="560">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/chart b" uuid="d2bdf496f96ee521628490a038411210fbe29b15" name="chart_4" x="294" y="560">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="midi/nrpn_i_rx" uuid="a087a1e22a73fb294701e180cca595a32f0c1b098a" name="nrpn_i_rx_1" x="42" y="686">
+      <params/>
+      <attribs>
+         <combo attributeName="device" selection="omni"/>
+         <spinner attributeName="channel" value="1"/>
+         <spinner attributeName="nrpn" value="0"/>
+      </attribs>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_10" x="224" y="686">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_11" x="266" y="686">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_12" x="224" y="742">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="disp/i" uuid="5e35fd0c62d81e70017289250cf28edd26e19e4a" name="i_13" x="266" y="742">
+      <params/>
+      <attribs/>
+   </obj>
+   <nets>
+      <net>
+         <source obj="nrpn_multi_rx_1" outlet="ib"/>
+         <dest obj="i_1" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi_rx_1" outlet="ip"/>
+         <dest obj="i_2" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi_rx_1" outlet="msb"/>
+         <dest obj="i_3" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi_rx_1" outlet="lsb"/>
+         <dest obj="i_4" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi_rx_1" outlet="fb"/>
+         <dest obj="chart_1" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi_rx_1" outlet="fp"/>
+         <dest obj="chart_2" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi_rx_1" outlet="chmsb"/>
+         <dest obj="kscope_1" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi_rx_1" outlet="chlsb"/>
+         <dest obj="kscope_2" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_f_rx_1" outlet="fb"/>
+         <dest obj="chart_3" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_f_rx_1" outlet="fp"/>
+         <dest obj="chart_4" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="fb"/>
+         <dest obj="chart_5" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="fp"/>
+         <dest obj="chart_6" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="ib"/>
+         <dest obj="i_5" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="ip"/>
+         <dest obj="i_6" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="msb"/>
+         <dest obj="i_7" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="lsb"/>
+         <dest obj="i_8" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="nrpn"/>
+         <dest obj="i_9" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="chmsb"/>
+         <dest obj="kscope_3" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_multi2_rx_1" outlet="chlsb"/>
+         <dest obj="kscope_4" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_i_rx_1" outlet="ib"/>
+         <dest obj="i_10" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_i_rx_1" outlet="ip"/>
+         <dest obj="i_11" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_i_rx_1" outlet="msb"/>
+         <dest obj="i_12" inlet="in"/>
+      </net>
+      <net>
+         <source obj="nrpn_i_rx_1" outlet="lsb"/>
+         <dest obj="i_13" inlet="in"/>
+      </net>
+   </nets>
+   <settings>
+      <subpatchmode>no</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+   <windowPos>
+      <x>812</x>
+      <y>12</y>
+      <width>836</width>
+      <height>993</height>
+   </windowPos>
+</patch-1.0>

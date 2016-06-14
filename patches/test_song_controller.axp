@@ -1,0 +1,355 @@
+<patch-1.0 appVersion="1.0.10">
+   <obj type="math/div 2" uuid="f14884de1baf3e615e12ee162a96a013eca76789" name="div_1" x="1260" y="28">
+      <params/>
+      <attribs/>
+   </obj>
+   <comment type="patch/comment" x="98" y="56" text="---- Pattern 1 -----------------------------------------------------------------"/>
+   <comment type="patch/comment" x="532" y="56" text="---- Pattern 2 -----------------------------------------------------------------"/>
+   <obj type="drj/seq/stepseq_8_pitch" uuid="123548ea71ef03f5956af0c14bff9cab0972947ac" name="pitch 1" x="98" y="84">
+      <params>
+         <frac32.s.map name="p1" value="0.0"/>
+         <frac32.s.map name="p2" value="12.0"/>
+         <frac32.s.map name="p3" value="19.0"/>
+         <frac32.s.map name="p4" value="24.0"/>
+         <frac32.s.map name="p5" value="1.0"/>
+         <frac32.s.map name="p6" value="0.0"/>
+         <frac32.s.map name="p7" value="0.0"/>
+         <frac32.s.map name="p8" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_u" uuid="948523ea71e103abc56ff0c14bff9c17972947ac" name="velo 1" x="252" y="84">
+      <params>
+         <frac32.u.map name="v1" value="32.0"/>
+         <frac32.u.map name="v2" value="23.5"/>
+         <frac32.u.map name="v3" value="16.5"/>
+         <frac32.u.map name="v4" value="18.0"/>
+         <frac32.u.map name="v5" value="32.0"/>
+         <frac32.u.map name="v6" value="32.0"/>
+         <frac32.u.map name="v7" value="32.0"/>
+         <frac32.u.map name="v8" value="32.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_b" uuid="ae8548ea713123fd356ff0c14bff9cff999947ac" name="gate 1" x="392" y="84">
+      <params>
+         <frac32.s.map name="v1" value="-19.0"/>
+         <frac32.s.map name="v2" value="-4.0"/>
+         <frac32.s.map name="v3" value="-19.0"/>
+         <frac32.s.map name="v4" value="9.0"/>
+         <frac32.s.map name="v5" value="0.0"/>
+         <frac32.s.map name="v6" value="0.0"/>
+         <frac32.s.map name="v7" value="0.0"/>
+         <frac32.s.map name="v8" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_pitch" uuid="123548ea71ef03f5956af0c14bff9cab0972947ac" name="pitch 2" x="532" y="84">
+      <params>
+         <frac32.s.map name="p1" value="-15.0"/>
+         <frac32.s.map name="p2" value="-20.0"/>
+         <frac32.s.map name="p3" value="-24.0"/>
+         <frac32.s.map name="p4" value="-32.0"/>
+         <frac32.s.map name="p5" value="0.0"/>
+         <frac32.s.map name="p6" value="0.0"/>
+         <frac32.s.map name="p7" value="0.0"/>
+         <frac32.s.map name="p8" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_u" uuid="948523ea71e103abc56ff0c14bff9c17972947ac" name="velo 2" x="686" y="84">
+      <params>
+         <frac32.u.map name="v1" value="42.5"/>
+         <frac32.u.map name="v2" value="32.0"/>
+         <frac32.u.map name="v3" value="32.0"/>
+         <frac32.u.map name="v4" value="32.0"/>
+         <frac32.u.map name="v5" value="32.0"/>
+         <frac32.u.map name="v6" value="32.0"/>
+         <frac32.u.map name="v7" value="32.0"/>
+         <frac32.u.map name="v8" value="32.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_b" uuid="ae8548ea713123fd356ff0c14bff9cff999947ac" name="gate 2" x="826" y="84">
+      <params>
+         <frac32.s.map name="v1" value="27.0"/>
+         <frac32.s.map name="v2" value="42.0"/>
+         <frac32.s.map name="v3" value="43.0"/>
+         <frac32.s.map name="v4" value="36.0"/>
+         <frac32.s.map name="v5" value="0.0"/>
+         <frac32.s.map name="v6" value="0.0"/>
+         <frac32.s.map name="v7" value="0.0"/>
+         <frac32.s.map name="v8" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="seq/song_controller" uuid="30c14bff9213fd35481b31a2ecffaa29a11947ac" name="song_controller_1" x="994" y="84">
+      <params>
+         <bool32.tgl name="s1on" value="1"/>
+         <int32.hradio name="s1pat" value="0"/>
+         <int32.hradio name="s1len" value="3"/>
+         <int32.hradio name="s1rep" value="0"/>
+         <bool32.tgl name="s2on" value="0"/>
+         <int32.hradio name="s2pat" value="1"/>
+         <int32.hradio name="s2len" value="3"/>
+         <int32.hradio name="s2rep" value="0"/>
+         <bool32.tgl name="s3on" value="1"/>
+         <int32.hradio name="s3pat" value="0"/>
+         <int32.hradio name="s3len" value="1"/>
+         <int32.hradio name="s3rep" value="1"/>
+         <bool32.tgl name="s4on" value="1"/>
+         <int32.hradio name="s4pat" value="1"/>
+         <int32.hradio name="s4len" value="3"/>
+         <int32.hradio name="s4rep" value="0"/>
+         <bool32.tgl name="s5on" value="1"/>
+         <int32.hradio name="s5pat" value="2"/>
+         <int32.hradio name="s5len" value="6"/>
+         <int32.hradio name="s5rep" value="2"/>
+         <bool32.tgl name="s6on" value="1"/>
+         <int32.hradio name="s6pat" value="3"/>
+         <int32.hradio name="s6len" value="1"/>
+         <int32.hradio name="s6rep" value="2"/>
+         <bool32.tgl name="s7on" value="1"/>
+         <int32.hradio name="s7pat" value="0"/>
+         <int32.hradio name="s7len" value="4"/>
+         <int32.hradio name="s7rep" value="2"/>
+         <bool32.tgl name="s8on" value="1"/>
+         <int32.hradio name="s8pat" value="1"/>
+         <int32.hradio name="s8len" value="3"/>
+         <int32.hradio name="s8rep" value="0"/>
+         <bool32.tgl name="mute" value="0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="./simple_syn" uuid="9284a540-2b73-46e2-a969-913b53544bcc" name="simple_syn_1" x="1260" y="84">
+      <params>
+         <frac32.s.map name="osc" value="0.0"/>
+         <frac32.s.map name="pw" value="-1.0"/>
+         <frac32.s.map name="vcf:pitch" value="-23.0"/>
+         <frac32.u.map name="vcf:reso" value="35.0"/>
+         <frac32.s.map name="fenv:a" value="-6.0"/>
+         <frac32.s.map name="fenv:d" value="21.0"/>
+         <frac32.u.map name="fenv:s" value="9.5"/>
+         <frac32.s.map name="fenv:r" value="28.0"/>
+         <frac32.s.map name="aenv:a" value="-64.0"/>
+         <frac32.s.map name="aenv:d" value="13.0"/>
+         <frac32.u.map name="aenv:s" value="51.0"/>
+         <frac32.s.map name="aenv:r" value="11.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/seq_clk_sync" uuid="de6909eb627413af5b43f97184c1306f4b3a4793" name="seq_clk_sync_1" x="1386" y="84">
+      <params>
+         <int32 name="clockdiv" value="1"/>
+         <bool32.tgl name="miditransport" value="0"/>
+         <frac32.s.map name="tempo" value="25.0"/>
+         <frac32.u.map name="gatelength" value="30.0"/>
+         <int32 name="seqlength" value="2"/>
+      </params>
+      <attribs>
+         <combo attributeName="clocksource" selection="Internal"/>
+         <combo attributeName="device" selection="omni"/>
+      </attribs>
+   </obj>
+   <comment type="patch/comment" x="98" y="448" text="---- Pattern 3 ----------------------------------------------------------------"/>
+   <comment type="patch/comment" x="532" y="448" text="---- Pattern 4 ----------------------------------------------------------------"/>
+   <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="toggle_1" x="1386" y="462">
+      <params>
+         <bool32.tgl name="b" value="1"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_pitch" uuid="123548ea71ef03f5956af0c14bff9cab0972947ac" name="pitch 3" x="98" y="476">
+      <params>
+         <frac32.s.map name="p1" value="9.0"/>
+         <frac32.s.map name="p2" value="13.0"/>
+         <frac32.s.map name="p3" value="-2.0"/>
+         <frac32.s.map name="p4" value="-15.0"/>
+         <frac32.s.map name="p5" value="0.0"/>
+         <frac32.s.map name="p6" value="0.0"/>
+         <frac32.s.map name="p7" value="0.0"/>
+         <frac32.s.map name="p8" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_u" uuid="948523ea71e103abc56ff0c14bff9c17972947ac" name="velo 3" x="252" y="476">
+      <params>
+         <frac32.u.map name="v1" value="32.0"/>
+         <frac32.u.map name="v2" value="32.0"/>
+         <frac32.u.map name="v3" value="32.0"/>
+         <frac32.u.map name="v4" value="32.0"/>
+         <frac32.u.map name="v5" value="32.0"/>
+         <frac32.u.map name="v6" value="32.0"/>
+         <frac32.u.map name="v7" value="32.0"/>
+         <frac32.u.map name="v8" value="32.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_b" uuid="ae8548ea713123fd356ff0c14bff9cff999947ac" name="gate 3" x="392" y="476">
+      <params>
+         <frac32.s.map name="v1" value="0.0"/>
+         <frac32.s.map name="v2" value="0.0"/>
+         <frac32.s.map name="v3" value="0.0"/>
+         <frac32.s.map name="v4" value="0.0"/>
+         <frac32.s.map name="v5" value="0.0"/>
+         <frac32.s.map name="v6" value="0.0"/>
+         <frac32.s.map name="v7" value="0.0"/>
+         <frac32.s.map name="v8" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_pitch" uuid="123548ea71ef03f5956af0c14bff9cab0972947ac" name="pitch 4" x="532" y="476">
+      <params>
+         <frac32.s.map name="p1" value="-10.0"/>
+         <frac32.s.map name="p2" value="-1.0"/>
+         <frac32.s.map name="p3" value="9.0"/>
+         <frac32.s.map name="p4" value="11.0"/>
+         <frac32.s.map name="p5" value="0.0"/>
+         <frac32.s.map name="p6" value="0.0"/>
+         <frac32.s.map name="p7" value="0.0"/>
+         <frac32.s.map name="p8" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_u" uuid="948523ea71e103abc56ff0c14bff9c17972947ac" name="velo 4" x="686" y="476">
+      <params>
+         <frac32.u.map name="v1" value="37.0"/>
+         <frac32.u.map name="v2" value="36.0"/>
+         <frac32.u.map name="v3" value="24.5"/>
+         <frac32.u.map name="v4" value="30.0"/>
+         <frac32.u.map name="v5" value="32.0"/>
+         <frac32.u.map name="v6" value="32.0"/>
+         <frac32.u.map name="v7" value="32.0"/>
+         <frac32.u.map name="v8" value="32.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/seq/stepseq_8_b" uuid="ae8548ea713123fd356ff0c14bff9cff999947ac" name="gate 4" x="826" y="476">
+      <params>
+         <frac32.s.map name="v1" value="0.0"/>
+         <frac32.s.map name="v2" value="0.0"/>
+         <frac32.s.map name="v3" value="0.0"/>
+         <frac32.s.map name="v4" value="0.0"/>
+         <frac32.s.map name="v5" value="0.0"/>
+         <frac32.s.map name="v6" value="0.0"/>
+         <frac32.s.map name="v7" value="0.0"/>
+         <frac32.s.map name="v8" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/audio/out_stereo_vol" uuid="awca1a567f535acc21055669829101d3ee7f0189" name="out_stereo_vol_1" x="1260" y="630">
+      <params>
+         <frac32.u.map name="volume" value="26.5"/>
+      </params>
+      <attribs/>
+   </obj>
+   <nets>
+      <net>
+         <source obj="seq_clk_sync_1" outlet="clock"/>
+         <dest obj="song_controller_1" inlet="clock"/>
+      </net>
+      <net>
+         <source obj="toggle_1" outlet="o"/>
+         <dest obj="seq_clk_sync_1" inlet="run"/>
+         <dest obj="song_controller_1" inlet="run"/>
+      </net>
+      <net>
+         <source obj="simple_syn_1" outlet="out"/>
+         <dest obj="out_stereo_vol_1" inlet="left"/>
+         <dest obj="out_stereo_vol_1" inlet="right"/>
+      </net>
+      <net>
+         <source obj="song_controller_1" outlet="s1"/>
+         <dest obj="simple_syn_1" inlet="pitch"/>
+      </net>
+      <net>
+         <source obj="song_controller_1" outlet="s2"/>
+         <dest obj="simple_syn_1" inlet="velo"/>
+      </net>
+      <net>
+         <source obj="div_1" outlet="out"/>
+         <dest obj="seq_clk_sync_1" inlet="gatelength"/>
+      </net>
+      <net>
+         <source obj="song_controller_1" outlet="s3"/>
+         <dest obj="div_1" inlet="in"/>
+      </net>
+      <net>
+         <source obj="song_controller_1" outlet="step"/>
+         <dest obj="pitch 1" inlet="step"/>
+         <dest obj="gate 2" inlet="step"/>
+         <dest obj="gate 1" inlet="step"/>
+         <dest obj="velo 1" inlet="step"/>
+         <dest obj="pitch 2" inlet="step"/>
+         <dest obj="velo 2" inlet="step"/>
+         <dest obj="pitch 3" inlet="step"/>
+         <dest obj="velo 3" inlet="step"/>
+         <dest obj="gate 3" inlet="step"/>
+         <dest obj="pitch 4" inlet="step"/>
+         <dest obj="velo 4" inlet="step"/>
+         <dest obj="gate 4" inlet="step"/>
+      </net>
+      <net>
+         <source obj="pitch 1" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p1s1"/>
+      </net>
+      <net>
+         <source obj="velo 1" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p1s2"/>
+      </net>
+      <net>
+         <source obj="gate 1" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p1s3"/>
+      </net>
+      <net>
+         <source obj="pitch 2" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p2s1"/>
+      </net>
+      <net>
+         <source obj="velo 2" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p2s2"/>
+      </net>
+      <net>
+         <source obj="gate 2" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p2s3"/>
+      </net>
+      <net>
+         <source obj="pitch 3" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p3s1"/>
+      </net>
+      <net>
+         <source obj="velo 3" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p3s2"/>
+      </net>
+      <net>
+         <source obj="gate 3" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p3s3"/>
+      </net>
+      <net>
+         <source obj="pitch 4" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p4s1"/>
+      </net>
+      <net>
+         <source obj="velo 4" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p4s2"/>
+      </net>
+      <net>
+         <source obj="gate 4" outlet="out"/>
+         <dest obj="song_controller_1" inlet="p4s3"/>
+      </net>
+      <net>
+         <source obj="seq_clk_sync_1" outlet="gate"/>
+         <dest obj="simple_syn_1" inlet="gate"/>
+      </net>
+   </nets>
+   <settings>
+      <subpatchmode>no</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+   <windowPos>
+      <x>-8</x>
+      <y>-8</y>
+      <width>1936</width>
+      <height>1056</height>
+   </windowPos>
+</patch-1.0>

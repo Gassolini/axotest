@@ -46,3 +46,11 @@ Network Trash Folder
 Temporary Items
 .apdisk
 objects/seq/seq_clk_sync - Kopi.axo.x
+patches/lfo_pwm_img.png
+*.png
+objects/misc/game_of_life.axo
+objects/misc/grid32x32.axo
+objects/misc/test1_float_fix.axo
+objects/math/sdiv.axo
+objects/midi/nrpn_rx_info.axp
+patches/test_subpatch_bug.axp

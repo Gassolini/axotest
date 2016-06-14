@@ -1,0 +1,74 @@
+<objdefs appVersion="1.0.10">
+  <obj.normal id="allpass_mod" uuid="baa5a7d3ed59cc8ee1eb9082ec53d8044e145f72">
+    <sDescription>Allpass filter</sDescription>
+    <author>Are LEistad</author>
+    <license>BSD</license>
+    <helpPatch>allpass.axh</helpPatch>
+    <inlets>
+      <frac32buffer name="in"    description="Input"/>
+      <frac32buffer name="gmod"  description="Freq mod"/>
+      <int32        name="delay" description="Delay in sample periods"/>
+    </inlets>
+    <outlets>
+      <frac32buffer name="out" description="out"/>
+    </outlets>
+    <displays/>
+    <params>
+      <frac32.s.map.ratio name="g" noLabel="true"/>
+      <int32 name="delay" noLabel="false">
+         <MinValue i="1"/>
+         <MaxValue i="16"/>
+      </int32>
+    </params>
+    <attribs>
+      <!--spinner name="delay" MinValue="1" MaxValue="10000" DefaultValue="1000"/-->
+    </attribs>
+    <code.declaration><![CDATA[
+
+      #define ALLPASS_DELAY_SIZE 16
+      int16_t d[ALLPASS_DELAY_SIZE];
+      int dpos;
+      int delay_size;
+
+    ]]></code.declaration>
+    <code.init><![CDATA[
+
+      for( int i = 0; i < ALLPASS_DELAY_SIZE; i++ )
+        {
+          d[i] = 0;
+        }
+      dpos = 0;
+      delay_size = 1;
+
+    ]]></code.init>
+    <code.krate><![CDATA[
+    ]]></code.krate>
+    <code.srate><![CDATA[
+
+      int32_t g2 = (param_g + inlet_gmod) <<4;
+
+      delay_size = param_delay + inlet_delay;
+      if( delay_size > ALLPASS_DELAY_SIZE )
+        delay_size = ALLPASS_DELAY_SIZE;
+      else if( delay_size < 1 )
+        delay_size = 1;
+
+#if 1
+      int32_t dout = d[dpos]<<16;
+      int32_t din  = ___SMMLA(g2,dout,inlet_in>>1);
+      d[dpos++]    = din>>15;
+      outlet_out   = ___SMMLS(g2,din<<1,dout>>1)<<1;
+#else
+      int32_t dout = d[dpos];
+      int32_t din = ___SMMLA(g2,dout,inlet_in>>2)<<1; // stable delay content
+      d[dpos++] = din;
+      outlet_out = ___SMMLS(g2,din<<1,dout)<<1;
+#endif
+      if( dpos >= delay_size )
+        {
+          dpos = 0;
+        }
+
+    ]]></code.srate>
+  </obj.normal>
+</objdefs>

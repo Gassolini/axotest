@@ -1,0 +1,339 @@
+<objdefs appVersion="1.0.10">
+  <obj.normal id="song_controller" uuid="30c14bff9213fd35481b31a2ecffaa29a11947ac">
+    <sDescription>Step sequencer song controller / pattern selector</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <inlets>
+      <bool32        name="run"   description="Enable playing"/>
+      <bool32.rising name="clock" description="Clock pulse"/>
+      <bool32.rising name="start" description="Restart songstep pulse"/>
+      <bool32.rising name="reset" description="Reset song pulse"/>
+      <frac32 name="p1s1" description="Pattern 1 signal 1 input"/>
+      <frac32 name="p1s2" description="Pattern 1 signal 2 input"/>
+      <frac32 name="p1s3" description="Pattern 1 signal 3 input"/>
+      <bool32 name="p1g1" description="Pattern 1 gate 1 input"/>
+      <frac32 name="p2s1" description="Pattern 2 signal 1 input"/>
+      <frac32 name="p2s2" description="Pattern 2 signal 2 input"/>
+      <frac32 name="p2s3" description="Pattern 2 signal 3 input"/>
+      <bool32 name="p2g1" description="Pattern 2 gate 1 input"/>
+      <frac32 name="p3s1" description="Pattern 3 signal 1 input"/>
+      <frac32 name="p3s2" description="Pattern 3 signal 2 input"/>
+      <frac32 name="p3s3" description="Pattern 3 signal 3 input"/>
+      <bool32 name="p3g1" description="Pattern 3 gate 1 input"/>
+      <frac32 name="p4s1" description="Pattern 4 signal 1 input"/>
+      <frac32 name="p4s2" description="Pattern 4 signal 2 input"/>
+      <frac32 name="p4s3" description="Pattern 4 signal 3 input"/>
+      <bool32 name="p4g1" description="Pattern 4 gate 1 input"/>
+    </inlets>
+    <outlets>
+      <int32 name="songstep" description="Current song step"/>
+      <int32 name="pattern"  description="Current pattern number"/>
+      <int32 name="step"     description="Current step number"/>
+      <bool32.pulse name="switch" description="Songstep switch pulse"/>
+      <frac32 name="s1" description="Signal 1 output"/>
+      <frac32 name="s2" description="Signal 2 output"/>
+      <frac32 name="s3" description="Signal 3 output"/>
+      <bool32 name="g1" description="Gate 1 output"/>
+    </outlets>
+    <displays>
+      <int32.label name="songstep  " noLabel="false"/>
+      <int32.label name="pattern  " noLabel="false"/>
+      <int32.label name="step  " noLabel="false"/>
+    </displays>
+    <params>
+      <bool32.tgl name="s1on" description="Enable songstep 1"/>
+      <int32.hradio name="s1pat" noLabel="false">
+         <MaxValue i="4"/>
+      </int32.hradio>
+      <int32.hradio name="s1len" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <int32.hradio name="s1rep" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <!--int32 name="p1length" noLabel="false">
+          <MinValue i="0"/>
+          <MaxValue i="128"/>
+       </int32>
+      <int32 name="p1count" noLabel="false">
+          <MinValue i="0"/>
+          <MaxValue i="128"/>
+       </int32-->
+
+      <bool32.tgl name="s2on" description="Enable songstep 2"/>
+      <int32.hradio name="s2pat" noLabel="false">
+         <MaxValue i="4"/>
+      </int32.hradio>
+      <int32.hradio name="s2len" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <int32.hradio name="s2rep" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+
+      <bool32.tgl name="s3on" description="Enable songstep 3"/>
+      <int32.hradio name="s3pat" noLabel="false">
+         <MaxValue i="4"/>
+      </int32.hradio>
+      <int32.hradio name="s3len" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <int32.hradio name="s3rep" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+
+      <bool32.tgl name="s4on" description="Enable songstep 4"/>
+      <int32.hradio name="s4pat" noLabel="false">
+         <MaxValue i="4"/>
+      </int32.hradio>
+      <int32.hradio name="s4len" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <int32.hradio name="s4rep" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+
+      <bool32.tgl name="s5on" description="Enable songstep 5"/>
+      <int32.hradio name="s5pat" noLabel="false">
+         <MaxValue i="4"/>
+      </int32.hradio>
+      <int32.hradio name="s5len" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <int32.hradio name="s5rep" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+
+      <bool32.tgl name="s6on" description="Enable songstep 6"/>
+      <int32.hradio name="s6pat" noLabel="false">
+         <MaxValue i="4"/>
+      </int32.hradio>
+      <int32.hradio name="s6len" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <int32.hradio name="s6rep" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+
+      <bool32.tgl name="s7on" description="Enable songstep 7"/>
+      <int32.hradio name="s7pat" noLabel="false">
+         <MaxValue i="4"/>
+      </int32.hradio>
+      <int32.hradio name="s7len" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <int32.hradio name="s7rep" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+
+      <bool32.tgl name="s8on" description="Enable songstep 8"/>
+      <int32.hradio name="s8pat" noLabel="false">
+         <MaxValue i="4"/>
+      </int32.hradio>
+      <int32.hradio name="s8len" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+      <int32.hradio name="s8rep" noLabel="false">
+         <MaxValue i="16"/>
+      </int32.hradio>
+
+      <bool32.tgl name="mute" description="Mutes the pattern outputs"/>
+    </params>
+    <attribs/>
+    <code.declaration><![CDATA[
+
+      int32_t   start_sequence;
+      int32_t   current_n_songsteps;
+      int32_t   current_songstep;
+      int32_t   current_repeat;
+      int32_t   current_pattern;
+      int32_t   current_step;
+      int32_t   current_n_steps;
+      int32_t   current_n_repeats;
+      uint32_t  old_clock;
+      uint32_t  old_start;
+      uint32_t  old_reset;
+
+    ]]></code.declaration>
+      <code.init><![CDATA[
+
+      start_sequence      = 0;
+      current_n_songsteps = 8;
+      current_songstep    = 0;
+      current_repeat      = 0;
+      current_pattern     = 0;
+      current_step        = 0;
+      current_n_steps     = 0;
+      current_n_repeats   = 0;
+      old_clock           = 0;
+      old_start           = 0;
+      old_reset           = 0;
+
+    ]]></code.init>
+      <code.krate><![CDATA[
+
+      outlet_switch = 0;
+
+      if( start_sequence < 1 )
+        {
+          // Initialize
+          current_songstep = 0;
+          outlet_switch    = 1;
+          start_sequence++;
+        }
+      else if( inlet_reset && !old_reset )
+        {
+          // Reset song
+          current_songstep = 0;
+          outlet_switch    = 1;
+        }
+      else if( inlet_start && !old_start )
+        {
+         // Restart songstep
+          outlet_switch = 1;
+        }
+      else if( inlet_run && inlet_clock && !old_clock )
+        {
+          // Advance step and songstep
+          current_step++;
+          if( current_step >= current_n_steps )
+            {
+              current_step = 0;
+              current_repeat++;
+              if( current_repeat >= current_n_repeats )
+                {
+                  current_repeat = 0;
+                  current_songstep++;
+                  if( current_songstep >= current_n_songsteps )
+                    {
+                      current_songstep = 0;
+                    }
+                  outlet_switch = 1;
+                }
+            }
+        }
+
+
+      // Switch songstep, searching for the next enabled one
+      if( outlet_switch == 1 )
+        {
+          int32_t current_enable;
+          int32_t tries = current_n_songsteps;
+          current_repeat = 0;
+          current_step   = 0;
+          do
+            {
+              switch( current_songstep )
+                {
+                  case 0: current_enable    = param_s1on;
+                          current_pattern   = param_s1pat;
+                          current_n_steps   = param_s1len+1;
+                          current_n_repeats = param_s1rep+1;
+                          break;
+                  case 1: current_enable    = param_s2on;
+                          current_pattern   = param_s2pat;
+                          current_n_steps   = param_s2len+1;
+                          current_n_repeats = param_s2rep+1;
+                          break;
+                  case 2: current_enable    = param_s3on;
+                          current_pattern   = param_s3pat;
+                          current_n_steps   = param_s3len+1;
+                          current_n_repeats = param_s3rep+1;
+                          break;
+                  case 3: current_enable    = param_s4on;
+                          current_pattern   = param_s4pat;
+                          current_n_steps   = param_s4len+1;
+                          current_n_repeats = param_s4rep+1;
+                          break;
+                  case 4: current_enable    = param_s5on;
+                          current_pattern   = param_s5pat;
+                          current_n_steps   = param_s5len+1;
+                          current_n_repeats = param_s5rep+1;
+                          break;
+                  case 5: current_enable    = param_s6on;
+                          current_pattern   = param_s6pat;
+                          current_n_steps   = param_s6len+1;
+                          current_n_repeats = param_s6rep+1;
+                          break;
+                  case 6: current_enable    = param_s7on;
+                          current_pattern   = param_s7pat;
+                          current_n_steps   = param_s7len+1;
+                          current_n_repeats = param_s7rep+1;
+                          break;
+                  case 7: current_enable    = param_s8on;
+                          current_pattern   = param_s8pat;
+                          current_n_steps   = param_s8len+1;
+                          current_n_repeats = param_s8rep+1;
+                          break;
+                  default:current_enable    = 0;
+                          current_pattern   = 0;
+                          current_n_steps   = 0;
+                          current_n_repeats = 0;
+                          break;
+                }
+              if( current_enable == 0 ) //current_n_steps == 0 || current_n_repeats == 0 )
+                {
+                  current_songstep++;
+                  if( current_songstep >= current_n_songsteps )
+                    {
+                      current_songstep = 0;
+                    }
+                }
+            }
+          while( current_enable == 0 && --tries > 0 );
+          //while( (current_n_steps == 0 || current_n_repeats == 0) && --tries > 0 );
+        }
+
+
+      // Fudge to start on 1st clock pulse from 'cold'
+      if( start_sequence < 2 )
+        {
+          current_step = -1;
+          start_sequence++;
+        }
+
+      switch( param_mute ? 4 : current_pattern )
+        {
+          case 0:   outlet_s1  = inlet_p1s1;
+                    outlet_s2  = inlet_p1s2;
+                    outlet_s3  = inlet_p1s3;
+                    outlet_g1  = inlet_p1g1;
+                    break;
+          case 1:   outlet_s1  = inlet_p2s1;
+                    outlet_s2  = inlet_p2s2;
+                    outlet_s3  = inlet_p2s3;
+                    outlet_g1  = inlet_p2g1;
+                    break;
+          case 2:   outlet_s1  = inlet_p3s1;
+                    outlet_s2  = inlet_p3s2;
+                    outlet_s3  = inlet_p3s3;
+                    outlet_g1  = inlet_p3g1;
+                    break;
+          case 3:   outlet_s1  = inlet_p4s1;
+                    outlet_s2  = inlet_p4s2;
+                    outlet_s3  = inlet_p4s3;
+                    outlet_g1  = inlet_p4g1;
+                    break;
+          case 4 :
+          default:  outlet_s1  = 0;
+                    outlet_s2  = 0;
+                    outlet_s3  = 0;
+                    outlet_g1  = 0;
+                    break;
+        }
+
+      outlet_songstep = current_songstep;
+      outlet_pattern  = current_pattern;
+      outlet_step     = current_step;
+
+      disp_songstep   = current_songstep + 1;
+      disp_pattern    = current_pattern + 1;
+      disp_step       = current_step + 1;
+
+      old_clock       = inlet_clock;
+      old_start       = inlet_start;
+      old_reset       = inlet_reset;
+
+    ]]></code.krate>
+   </obj.normal>
+</objdefs>

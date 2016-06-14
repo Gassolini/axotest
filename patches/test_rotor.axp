@@ -1,0 +1,114 @@
+<patch-1.0 appVersion="1.0.10">
+   <obj type="osc/saw" uuid="739ecc36017ef3249479b8f01716b8bbfba9abc1" name="saw_1" x="84" y="70">
+      <params>
+         <frac32.s.map name="pitch" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="./fx/rotor_sr" uuid="5067892d-bff6-4852-9f5b-5df5c39ecf60" name="rotor_sr_1" x="252" y="84">
+      <params>
+         <frac32.s.map name="osc" value="16.0"/>
+         <frac32.u.map name="bias0" value="0.0"/>
+         <frac32.u.map name="bias90" value="0.0"/>
+         <frac32.u.map name="bias180" value="0.0"/>
+         <frac32.u.map name="bias270" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="disp/scope 128 b trig" uuid="11747dcd1dc9afe4919f537c861fb18b80b4e4e" name="scope_1" x="378" y="84">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="mix/mix 2 g" uuid="221f038da51943034a75e442c90624fcebfe6112" name="mix_1" x="588" y="140">
+      <params>
+         <frac32.u.map name="gain1" value="0.0"/>
+         <frac32.u.map name="gain2" value="33.5"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="osc/pwm" uuid="a6b40ff63f161d8bac8ea2eba5b0dbffcf49b472" name="pwm_1" x="84" y="168">
+      <params>
+         <frac32.s.map name="pitch" value="3.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="osc/sine" uuid="6e094045cca76a9dbf7ebfa72e44e4700d2b3ba" name="sine_1" x="84" y="280">
+      <params>
+         <frac32.s.map name="pitch" value="6.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="drj/audio/out_stereo_vol" uuid="awca1a567f535acc21055669829101d3ee7f0189" name="out_stereo_vol_1" x="588" y="294">
+      <params>
+         <frac32.u.map name="volume" value="30.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="./fx/rotor_kr" uuid="80bd0ce7-ae53-4e86-b8d7-c464aa26c6b6" name="rotor_kr_1" x="252" y="392">
+      <params>
+         <frac32.s.map name="lfo" value="-51.0"/>
+         <frac32.u.map name="bias0" value="0.0"/>
+         <frac32.u.map name="bias90" value="0.0"/>
+         <frac32.u.map name="bias180" value="0.0"/>
+         <frac32.u.map name="bias270" value="0.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <obj type="disp/scope 128 b trig" uuid="11747dcd1dc9afe4919f537c861fb18b80b4e4e" name="scope_2" x="378" y="392">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="osc/tri" uuid="905879afa8256b0ca207557d656949e476ca6f16" name="tri_1" x="84" y="406">
+      <params>
+         <frac32.s.map name="pitch" value="9.0"/>
+      </params>
+      <attribs/>
+   </obj>
+   <nets>
+      <net>
+         <source obj="mix_1" outlet="out"/>
+         <dest obj="out_stereo_vol_1" inlet="left"/>
+         <dest obj="out_stereo_vol_1" inlet="right"/>
+      </net>
+      <net>
+         <source obj="saw_1" outlet="wave"/>
+         <dest obj="rotor_sr_1" inlet="inlet0"/>
+         <dest obj="rotor_kr_1" inlet="inlet0"/>
+      </net>
+      <net>
+         <source obj="pwm_1" outlet="wave"/>
+         <dest obj="rotor_sr_1" inlet="inlet90"/>
+         <dest obj="rotor_kr_1" inlet="inlet90"/>
+      </net>
+      <net>
+         <source obj="sine_1" outlet="wave"/>
+         <dest obj="rotor_sr_1" inlet="inlet180"/>
+         <dest obj="rotor_kr_1" inlet="inlet180"/>
+      </net>
+      <net>
+         <source obj="tri_1" outlet="wave"/>
+         <dest obj="rotor_sr_1" inlet="inlet270"/>
+         <dest obj="rotor_kr_1" inlet="inlet270"/>
+      </net>
+      <net>
+         <source obj="rotor_kr_1" outlet="out"/>
+         <dest obj="mix_1" inlet="in2"/>
+         <dest obj="scope_2" inlet="in"/>
+      </net>
+      <net>
+         <source obj="rotor_sr_1" outlet="out"/>
+         <dest obj="mix_1" inlet="in1"/>
+         <dest obj="scope_1" inlet="in"/>
+      </net>
+   </nets>
+   <settings>
+      <subpatchmode>no</subpatchmode>
+   </settings>
+   <notes><![CDATA[]]></notes>
+   <windowPos>
+      <x>661</x>
+      <y>72</y>
+      <width>813</width>
+      <height>866</height>
+   </windowPos>
+</patch-1.0>

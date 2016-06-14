@@ -1,0 +1,70 @@
+<objdefs appVersion="1.0.10">
+  <obj.normal id="xfade" uuid="bb3d1183cdc80947ed087360199938d5a39e3c9a" >
+    <sDescription>Crossfade between two inputs, bipolar control input</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <inlets>
+      <frac32 name="i1" description="input"/>
+      <frac32 name="i2" description="input"/>
+      <frac32.bipolar name="c" description="control"/>
+    </inlets>
+    <outlets>
+      <frac32 name="o" description="output"/>
+    </outlets>
+    <displays/>
+    <params/>
+    <attribs/>
+    <code.krate><![CDATA[
+      int32_t a,out;
+      a        = (inlet_c>>1) + (1<<26);
+      out      = ___SMMUL(  ((1<<27) - a)<<3, inlet_i1<<2 );
+      outlet_o = ___SMMLA(             a<<3,  inlet_i2<<2, out );
+    ]]></code.krate>
+  </obj.normal>
+  <obj.normal id="xfade" uuid="dc55d8d05283610532b8fd2e3f9cfac82d5030c4">
+    <sDescription>Crossfade between two inputs, bipolar control input</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <inlets>
+       <frac32buffer name="i1" description="input"/>
+       <frac32buffer name="i2" description="input"/>
+       <frac32buffer.bipolar name="c" description="control"/>
+    </inlets>
+    <outlets>
+       <frac32buffer name="o" description="output"/>
+    </outlets>
+    <displays/>
+    <params/>
+    <attribs/>
+    <code.srate><![CDATA[
+      int32_t a,out;
+      a        = (inlet_c>>1) + (1<<26);
+      out      = ___SMMUL(  ((1<<27) - a)<<3, inlet_i1<<2 );
+      outlet_o = ___SMMLA(             a<<3,  inlet_i2<<2, out );
+    ]]></code.srate>
+  </obj.normal>
+  <obj.normal id="xfade" uuid="d218e96cdc9cbc7e375dc9192adb48f705ef701a">
+    <sDescription>Crossfade between two inputs, bipolar control input</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <inlets>
+      <frac32buffer name="i1" description="input"/>
+      <frac32buffer name="i2" description="input"/>
+      <frac32.bipolar       name="c" description="control"/>
+    </inlets>
+    <outlets>
+      <frac32buffer name="o" description="output"/>
+    </outlets>
+    <displays/>
+    <params/>
+    <attribs/>
+    <code.krate><![CDATA[
+    ]]></code.krate>
+    <code.srate><![CDATA[
+      int32_t a,out;
+      a        = (inlet_c>>1) + (1<<26);
+      out      = ___SMMUL(  ((1<<27) - a)<<3, inlet_i1<<2 );
+      outlet_o = ___SMMLA(             a<<3,  inlet_i2<<2, out );
+    ]]></code.srate>
+  </obj.normal>
+</objdefs>
