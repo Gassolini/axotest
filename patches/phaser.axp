@@ -169,14 +169,15 @@
    <obj type="filter/phaser_32_mod" uuid="b82ec53ed5921d8040ae5f7aa34e145a7d1eb902" name="phaser_multi_1" x="476" y="378">
       <params>
          <frac32.s.map name="manual" value="-24.0"/>
-         <frac32.u.map name="lfoamt" value="13.0"/>
-         <frac32.s.map name="lfofreq" value="-28.0"/>
-         <frac32.u.map name="lfopw" value="41.0"/>
-         <int32 name="lfowave" value="3"/>
-         <frac32.s.map name="feedback" value="45.0"/>
-         <frac32.u.map name="mix" value="45.0"/>
-         <int32 name="delay" value="11"/>
-         <int32 name="stages" value="7"/>
+         <frac32.u.map name="lfoamt" value="23.5"/>
+         <frac32.s.map name="lfofreq" value="-54.0"/>
+         <frac32.u.map name="lfopw" value="62.0"/>
+         <int32 name="lfowave" value="4"/>
+         <frac32.s.map name="feedback" value="50.0"/>
+         <frac32.u.map name="mix" value="43.5"/>
+         <int32 name="delay" value="7"/>
+         <int32 name="stages" value="16"/>
+         <bool32.tgl name="saturate" value="0"/>
       </params>
       <attribs>
          <combo attributeName="mode" selection="16 bit"/>

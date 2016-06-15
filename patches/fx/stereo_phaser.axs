@@ -4,9 +4,13 @@
       <params/>
       <attribs/>
    </obj>
-   <obj type="filter/phaser_multi2" uuid="14e14b82ec5d8040ae5f7aa33ed5925a7d1eb902" name="phaser_multi2_l" x="714" y="42">
+   <obj type="filter/phaser_32" uuid="14e14b82ec5d8040ae5f7aa33ed5925a7d1eb902" name="phaser_multi2_l" x="714" y="42">
       <params/>
-      <attribs/>
+      <attribs>
+         <combo attributeName="mode" selection="32 bit"/>
+         <spinner attributeName="maxdelay" value="16"/>
+         <spinner attributeName="maxstages" value="16"/>
+      </attribs>
    </obj>
    <obj type="patch/outlet a" uuid="abd8c5fd3b0524a6630f65cad6dc27f6c58e2a3e" name="out_l" x="924" y="42">
       <params/>
@@ -120,9 +124,13 @@
       <params/>
       <attribs/>
    </obj>
-   <obj type="filter/phaser_multi2" uuid="14e14b82ec5d8040ae5f7aa33ed5925a7d1eb902" name="phaser_multi2_r" x="714" y="392">
+   <obj type="filter/phaser_32" uuid="14e14b82ec5d8040ae5f7aa33ed5925a7d1eb902" name="phaser_multi2_r" x="714" y="392">
       <params/>
-      <attribs/>
+      <attribs>
+         <combo attributeName="mode" selection="32 bit"/>
+         <spinner attributeName="maxdelay" value="16"/>
+         <spinner attributeName="maxstages" value="16"/>
+      </attribs>
    </obj>
    <obj type="conv/interp" uuid="d68c1a8709d8b55e3de8715d727ec0a2d8569d9a" name="interp_r" x="616" y="406">
       <params/>
@@ -133,6 +141,10 @@
       <attribs/>
    </obj>
    <obj type="patch/outlet a" uuid="abd8c5fd3b0524a6630f65cad6dc27f6c58e2a3e" name="out_r" x="924" y="462">
+      <params/>
+      <attribs/>
+   </obj>
+   <obj type="patch/inlet b" uuid="3b0d3eacb5bb978cb05d1372aa2714d5a4790844" name="inlet_1" x="602" y="532">
       <params/>
       <attribs/>
    </obj>
@@ -249,6 +261,11 @@
       <net>
          <source obj="manual" outlet="out"/>
          <dest obj="inv_3" inlet="in"/>
+      </net>
+      <net>
+         <source obj="inlet_1" outlet="inlet"/>
+         <dest obj="phaser_multi2_l" inlet="saturate"/>
+         <dest obj="phaser_multi2_r" inlet="saturate"/>
       </net>
    </nets>
    <settings>

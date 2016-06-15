@@ -34,6 +34,7 @@
          <MinValue i="0"/>
          <MaxValue i="32"/>
       </int32>
+      <bool32.tgl name="saturate" description="Use saturation in the feedback loop"/>
     </params>
     <attribs>
       <combo name="mode">
@@ -54,6 +55,7 @@
       attr_mode
       #define PHASER32_DELAY_SIZE attr_maxdelay
       #define PHASER32_SECTIONS   attr_maxstages
+      #define PHASER32_32_FB_SAT
 
   #ifdef PHASER32_32_BIT
       int32_t delay_line[PHASER32_DELAY_SIZE * PHASER32_SECTIONS];
@@ -183,6 +185,18 @@
 
       // Input
       int32_t dout, din, allpass;
+
+  #ifdef PHASER32_32_FB_SAT
+      // soft saturation distortion: y=1.5*x-0.5*x^3
+      if( param_saturate )
+        {
+          //int32_t ts      = __SSAT(old_out,28);
+          int32_t tsq31   = old_out<<3;
+          int32_t tsq31p3 = ___SMMUL(tsq31,___SMMUL(tsq31,tsq31));
+          old_out         = old_out + (old_out>>1) - (tsq31p3);
+        }
+  #endif
+
       allpass = ___SMMLA( param_feedback<<3, old_out<<2, inlet_in );
       allpass = __SSAT( allpass, 30 );
 
@@ -239,6 +253,7 @@
       <frac32.positive  name="mix"      description="Dry/wet mix"/>
       <int32.positive   name="delay"    description="Stage delay in sample periods"/>
       <int32.positive   name="stages"   description="Number of stages, 0 = bypass"/>
+      <bool32           name="saturate" description="Saturate the feednck loop"/>
     </inlets>
     <outlets>
       <frac32buffer name="out"   description="Mix output"/>
@@ -265,6 +280,7 @@
       attr_mode
       #define PHASER32B_DELAY_SIZE attr_maxdelay
       #define PHASER32B_SECTIONS   attr_maxstages
+      #define PHASER32B_32_FB_SAT
 
   #ifdef PHASER32B_32_BIT
       int32_t delay_line[PHASER32B_DELAY_SIZE * PHASER32B_SECTIONS];
@@ -315,6 +331,18 @@
 
       // Input
       int32_t dout, din, allpass;
+
+  #ifdef PHASER32B_32_FB_SAT
+      // soft saturation distortion: y=1.5*x-0.5*x^3
+      if( inlet_saturate )
+        {
+          //int32_t ts      = __SSAT(old_out,28);
+          int32_t tsq31   = old_out<<3;
+          int32_t tsq31p3 = ___SMMUL(tsq31,___SMMUL(tsq31,tsq31));
+          old_out         = old_out + (old_out>>1) - (tsq31p3);
+        }
+  #endif
+
       allpass = ___SMMLA( inlet_feedback<<3, old_out<<2, inlet_in );
       allpass = __SSAT( allpass, 30 );
 
