@@ -144,8 +144,10 @@
       <params/>
       <attribs/>
    </obj>
-   <obj type="patch/inlet b" uuid="3b0d3eacb5bb978cb05d1372aa2714d5a4790844" name="inlet_1" x="602" y="532">
-      <params/>
+   <obj type="ctrl/toggle" uuid="42b8134fa729d54bfc8d62d6ef3fa99498c1de99" name="saturate" x="616" y="518">
+      <params>
+         <bool32.tgl name="b" onParent="true" value="0"/>
+      </params>
       <attribs/>
    </obj>
    <nets>
@@ -263,9 +265,9 @@
          <dest obj="inv_3" inlet="in"/>
       </net>
       <net>
-         <source obj="inlet_1" outlet="inlet"/>
-         <dest obj="phaser_multi2_l" inlet="saturate"/>
+         <source obj="saturate" outlet="o"/>
          <dest obj="phaser_multi2_r" inlet="saturate"/>
+         <dest obj="phaser_multi2_l" inlet="saturate"/>
       </net>
    </nets>
    <settings>
