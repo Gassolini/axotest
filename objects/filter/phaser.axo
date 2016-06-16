@@ -11,8 +11,8 @@
       <int32          name="stages" description="Number of stages, added to stages param"/>
     </inlets>
     <outlets>
-      <frac32buffer name="out" description="Mix output"/>
-      <frac32       name="lfo" description="LFO output"/>
+      <frac32buffer name="out"  description="Mix output"/>
+      <frac32       name="lfo"  description="LFO output"/>
     </outlets>
     <displays/>
     <params>
@@ -30,11 +30,11 @@
          <MinValue i="1"/>
          <MaxValue i="32"/>
       </int32>
-      <int32                 name="stages"    noLabel="false" description="Number of stages">
+      <int32                 name="stages"   noLabel="false" description="Number of stages">
          <MinValue i="0"/>
          <MaxValue i="32"/>
       </int32>
-      <bool32.tgl name="saturate" description="Use saturation in the feedback loop"/>
+      <bool32.tgl            name="saturate" description="Use soft saturation in the feedback loop"/>
     </params>
     <attribs>
       <combo name="mode">
@@ -183,9 +183,6 @@
           stages = PHASER32_SECTIONS;
         }
 
-      // Input
-      int32_t dout, din, allpass;
-
   #ifdef PHASER32_32_FB_SAT
       // soft saturation distortion: y=1.5*x-0.5*x^3
       if( param_saturate )
@@ -197,17 +194,20 @@
         }
   #endif
 
+      // Input
+      int32_t dout, din, allpass;
+
       allpass = ___SMMLA( param_feedback<<3, old_out<<2, inlet_in );
       allpass = __SSAT( allpass, 30 );
 
       // 16 or 32 bit filters
   #ifdef PHASER32_32_BIT
       int32_t g2 = inlet_mod + lfo_out_interp - param_manual;
-      g2 = __SSAT( g2<<3, 31 );
+      g2 = __SSAT( g2<<2, 31 );
       int32_t *dptr = delay_line + dpos;
   #else
       int32_t g2 = inlet_mod + lfo_out_interp - param_manual;
-      g2 = __SSAT( g2<<4, 31 );
+      g2 = __SSAT( g2<<3, 31 );
       int16_t *dptr = delay_line + dpos;
   #endif
 
@@ -329,9 +329,6 @@
           stages = PHASER32B_SECTIONS;
         }
 
-      // Input
-      int32_t dout, din, allpass;
-
   #ifdef PHASER32B_32_FB_SAT
       // soft saturation distortion: y=1.5*x-0.5*x^3
       if( inlet_saturate )
@@ -343,17 +340,20 @@
         }
   #endif
 
+      // Input
+      int32_t dout, din, allpass;
+
       allpass = ___SMMLA( inlet_feedback<<3, old_out<<2, inlet_in );
       allpass = __SSAT( allpass, 30 );
 
       // 16 or 32 bit filters
   #ifdef PHASER32B_32_BIT
       int32_t g2 = inlet_mod;
-      g2 = __SSAT( g2<<3, 31 );
+      g2 = __SSAT( g2<<2, 31 );
       int32_t *dptr = delay_line + dpos;
   #else
       int32_t g2 = inlet_mod;
-      g2 = __SSAT( g2<<4, 31 );
+      g2 = __SSAT( g2<<3, 31 );
       int16_t *dptr = delay_line + dpos;
   #endif
 

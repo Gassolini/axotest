@@ -168,19 +168,19 @@
    </obj>
    <obj type="filter/phaser_32_mod" uuid="b82ec53ed5921d8040ae5f7aa34e145a7d1eb902" name="phaser_multi_1" x="476" y="378">
       <params>
-         <frac32.s.map name="manual" value="-24.0"/>
-         <frac32.u.map name="lfoamt" value="23.5"/>
-         <frac32.s.map name="lfofreq" value="-54.0"/>
-         <frac32.u.map name="lfopw" value="62.0"/>
+         <frac32.s.map name="manual" value="-46.0"/>
+         <frac32.u.map name="lfoamt" value="50.5"/>
+         <frac32.s.map name="lfofreq" value="-64.0"/>
+         <frac32.u.map name="lfopw" value="22.0"/>
          <int32 name="lfowave" value="4"/>
-         <frac32.s.map name="feedback" value="50.0"/>
-         <frac32.u.map name="mix" value="43.5"/>
-         <int32 name="delay" value="7"/>
-         <int32 name="stages" value="16"/>
-         <bool32.tgl name="saturate" value="0"/>
+         <frac32.s.map name="feedback" value="-33.0"/>
+         <frac32.u.map name="mix" value="42.0"/>
+         <int32 name="delay" value="4"/>
+         <int32 name="stages" value="4"/>
+         <bool32.tgl name="satfbk" value="0"/>
       </params>
       <attribs>
-         <combo attributeName="mode" selection="16 bit"/>
+         <combo attributeName="mode" selection="32 bit"/>
          <spinner attributeName="maxdelay" value="16"/>
          <spinner attributeName="maxstages" value="16"/>
       </attribs>
@@ -247,23 +247,23 @@
       <params/>
       <attribs/>
    </obj>
-   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_1" x="658" y="658">
+   <obj type="disp/kscope 128 b trig" uuid="b24afecdaf757006c3a4bb578f0aea1d7441153e" name="kscope_1" x="602" y="644">
       <params/>
       <attribs/>
    </obj>
-   <obj type="ctrl/dial p" uuid="cc5d2846c3d50e425f450c4b9851371b54f4d674" name="dial_1" x="924" y="658">
+   <obj type="ctrl/dial p" uuid="cc5d2846c3d50e425f450c4b9851371b54f4d674" name="dial_1" x="980" y="658">
       <params>
          <frac32.u.map name="value" value="57.0"/>
       </params>
       <attribs/>
    </obj>
-   <obj type="mix/xfade" uuid="375dc91d218e96cdc9cbc7e92adb48f705ef701a" name="xfade_1" x="1008" y="658">
+   <obj type="mix/xfade" uuid="375dc91d218e96cdc9cbc7e92adb48f705ef701a" name="xfade_1" x="1064" y="658">
       <params/>
       <attribs/>
    </obj>
-   <obj type="drj/audio/out_stereo_vol" uuid="awca1a567f535acc21055669829101d3ee7f0189" name="out_stereo_vol_1" x="1106" y="658">
+   <obj type="drj/audio/out_stereo_vol" uuid="awca1a567f535acc21055669829101d3ee7f0189" name="out_stereo_vol_1" x="1162" y="658">
       <params>
-         <frac32.u.map name="volume" value="20.0"/>
+         <frac32.u.map name="volume" value="19.0"/>
       </params>
       <attribs/>
    </obj>
@@ -281,7 +281,7 @@
    </obj>
    <obj type="osc/pwm" uuid="a6b40ff63f161d8bac8ea2eba5b0dbffcf49b472" name="pwm_1" x="308" y="728">
       <params>
-         <frac32.s.map name="pitch" value="-17.0"/>
+         <frac32.s.map name="pitch" value="-30.0"/>
       </params>
       <attribs/>
    </obj>
