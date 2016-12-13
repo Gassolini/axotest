@@ -1,0 +1,222 @@
+<objdefs appVersion="1.0.11">
+  <obj.normal id="fm4op" uuid="acfe725565982910bwca2a267f7751d3ee7120b2">
+    <sDescription>FM voice, 4 operators</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <includes>
+      <include>./fm4op.h</include>
+    </includes>
+    <inlets>
+      <frac32.bipolar       name="pitch" description="Pitch input"/>
+      <frac32.positive      name="op1a"  description="Operator 1 amplitude"/>
+      <frac32.positive      name="op2a"  description="Operator 2 amplitude"/>
+      <frac32.positive      name="op3a"  description="Operator 3 amplitude"/>
+      <frac32.positive      name="op4a"  description="Operator 4 amplitude"/>
+    </inlets>
+    <outlets>
+      <frac32buffer.bipolar name="out"  description="Output"/>
+    </outlets>
+    <params>
+      <frac32.s.map.pitch name="pitch" noLabel="false" description="Pitch bias"/>
+      <frac32.s.map.pitch name="op1r"  noLabel="false" description="Operator 1 ratio"/>
+      <frac32.s.map.pitch name="op2r"  noLabel="false" description="Operator 2 ratio"/>
+      <frac32.s.map.pitch name="op3r"  noLabel="false" description="Operator 3 ratio"/>
+      <frac32.s.map.pitch name="op4r"  noLabel="false" description="Operator 4 ratio"/>
+      <frac32.u.map.gain  name="op1i"  noLabel="false" description="Operator 1 index"/>
+      <frac32.u.map.gain  name="op2i"  noLabel="false" description="Operator 2 index"/>
+      <frac32.u.map.gain  name="op3i"  noLabel="false" description="Operator 3 index"/>
+      <frac32.u.map.gain  name="op4i"  noLabel="false" description="Operator 4 index"/>
+      <int32 name="algorithm" noLabel="false">
+         <MinValue i="1"/>
+         <MaxValue i="8"/>
+      </int32>
+    </params>
+    <attribs>
+      <combo name="optimize">
+        <MenuEntries>
+          <string>Space</string>
+          <string>Speed</string>
+        </MenuEntries>
+        <CEntries>
+          <string>0</string>
+          <string>1</string>
+        </CEntries>
+      </combo>
+    </attribs>
+    <code.declaration><![CDATA[
+
+      //#define DEBUGF LogTextMessage
+      #define DEBUGF(...) {}
+
+      // Performance as of 13.12.2016 00:36
+      // Optimized for space: 1144 bytes, < 6.8% DSP
+      // Optimized for speed: 1640 bytes, < 6.0% (1720 bytes, < 6.0% DSP with UNROLL_PITCH)
+      // Unroll pitch gains less than 0.1% DSP at the expense of 80 bytes, so not much use.
+
+      #if attr_optimize == 0
+        // ..no unrolling...
+      #elif attr_optimize == 1
+        //#define UNROLL_PITCH
+        #define UNROLL_OPERATORS
+      #elif attr_optimize == 2
+        //#define UNROLL_PITCH
+        #define UNROLL_OPERATORS
+        #define UNROLL_MODULATORS
+      #endif
+
+      int32_t  outputs[N_OPERATORS];
+      int32_t  outputs_tmp[N_OPERATORS];
+      uint32_t phase[N_OPERATORS];
+      uint32_t index[N_OPERATORS];
+      uint32_t amp[N_OPERATORS];
+      int32_t  freq[N_OPERATORS];
+#ifndef UNROLL_PITCH
+      int32_t  ratio[N_OPERATORS];
+#endif
+
+    ]]></code.declaration>
+    <code.init><![CDATA[
+
+      #ifdef UNROLL_OPERATORS
+        DEBUGF("UNROLL_PITCH");
+      #endif
+      #ifdef UNROLL_OPERATORS
+        DEBUGF("UNROLL_OPERATORS");
+      #endif
+      #ifdef UNROLL_MODULATORS
+        DEBUGF("UNROLL_MODULATORS");
+      #endif
+
+      for( int op = 0; op < N_OPERATORS; op++ )
+        {
+          phase[op] = 0;
+          index[op] = 0;
+          amp[op]   = 0;
+          freq[op]  = 0;
+        }
+
+    ]]></code.init>
+    <code.krate><![CDATA[
+
+      int32_t alg   = param_algorithm-1;
+      int32_t pitch = param_pitch + inlet_pitch;
+
+      index[0] = param_op1i;
+      index[1] = param_op2i;
+      index[2] = param_op3i;
+      index[3] = param_op4i;
+
+      amp[0]   = inlet_op1a<<1;
+      amp[1]   = inlet_op2a<<1;
+      amp[2]   = inlet_op3a<<1;
+      amp[3]   = inlet_op4a<<1;
+
+#ifndef UNROLL_PITCH
+      ratio[0] = param_op1r;
+      ratio[1] = param_op2r;
+      ratio[2] = param_op3r;
+      ratio[3] = param_op4r;
+      for( int op = 0; op < N_OPERATORS; op++ )
+        {
+          MTOFEXTENDED( pitch + ratio[op], freq[op] );
+        }
+#else
+      MTOFEXTENDED( pitch + param_op1r, freq[0] );
+      MTOFEXTENDED( pitch + param_op2r, freq[1] );
+      MTOFEXTENDED( pitch + param_op3r, freq[2] );
+      MTOFEXTENDED( pitch + param_op4r, freq[3] );
+#endif
+
+    ]]></code.krate>
+    <code.srate><![CDATA[
+
+      int32_t operator_index;
+      int32_t mod;
+      int32_t out;
+
+#ifdef UNROLL_MODULATORS
+  #define OPERATOR_FM( op ) \
+      /* Saves setting up the loop, but not measureably faster in practice... */
+      mod = 0; \
+      operator_index = fm4op_algorithms[alg][op][0]; \
+      if( operator_index >= 0 ) \
+        { \
+          mod += outputs[ operator_index ]; \
+          operator_index = fm4op_algorithms[alg][op][1]; \
+          if( operator_index >= 0 ) \
+            { \
+              mod += outputs[ operator_index ]; \
+              operator_index = fm4op_algorithms[alg][op][2]; \
+              if( operator_index >= 0 ) \
+                { \
+                  mod += outputs[ operator_index ]; \
+                  operator_index = fm4op_algorithms[alg][op][3]; \
+                  if( operator_index >= 0 ) \
+                    { \
+                      mod += outputs[ operator_index ]; \
+                    } \
+                } \
+            } \
+        } \
+      mod = ___SMMUL( index[op], mod ); \
+      phase[op] += freq[op]; \
+      SINE2TINTERP( phase[op] + (mod<<6), out ) \
+      outputs_tmp[op] = ___SMMUL( amp[op], out );
+#else
+  #define OPERATOR_FM( op ) \
+      mod = 0; \
+      for( int input = 0; input < N_OPERATORS; input++ ) \
+        { \
+          operator_index = fm4op_algorithms[alg][op][input]; \
+          if( operator_index < 0 ) \
+            { \
+              break; \
+            } \
+          mod += outputs[ operator_index ]; \
+        } \
+      mod = ___SMMUL( index[op], mod ); \
+      phase[op] += freq[op]; \
+      SINE2TINTERP( phase[op] + (mod<<6), out ) /* (mod<<6) is the largest index that doesn't go bad */ \
+      outputs_tmp[op] = ___SMMUL( amp[op], out );
+#endif
+
+#ifndef UNROLL_OPERATORS
+      for( int op = 0; op < N_OPERATORS; op++ )
+        {
+          OPERATOR_FM( op );
+        }
+#else
+      OPERATOR_FM( 0 );
+      OPERATOR_FM( 1 );
+      OPERATOR_FM( 2 );
+      OPERATOR_FM( 3 );
+#endif
+
+#define OPERATOR_MIX( op ) \
+      outputs[op] = outputs_tmp[op]; \
+      operator_index = fm4op_algorithms[alg][N_OPERATORS][op]; \
+      if( operator_index >= 0 ) \
+        { \
+          out += outputs[ operator_index ]; \
+          nch++; \
+        }
+
+      int32_t vol_index = -1;
+      out = 0;
+#ifndef UNROLL_OPERATORS
+      for( int op = 0; op < N_OPERATORS; op++ )
+        {
+          OPERATOR_MIX( op );
+        }
+#else
+      OPERATOR_MIX( 0 );
+      OPERATOR_MIX( 1 );
+      OPERATOR_MIX( 2 );
+      OPERATOR_MIX( 3 );
+#endif
+      outlet_out = ___SMMUL( fm_volscaling[ vol_index ], out<<1 );
+      //outlet_out = __SSAT( out, 28 );
+
+    ]]></code.srate>
+  </obj.normal>
+</objdefs>
