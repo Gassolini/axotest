@@ -32,6 +32,18 @@
       </int32>
     </params>
     <attribs>
+      <combo name="volscaling">
+        <MenuEntries>
+          <string>Type A</string>
+          <string>Type B</string>
+          <string>Off</string>
+        </MenuEntries>
+        <CEntries>
+          <string>1</string>
+          <string>2</string>
+          <string>0</string>
+        </CEntries>
+      </combo>
       <combo name="optimize">
         <MenuEntries>
           <string>Space</string>
@@ -45,39 +57,48 @@
     </attribs>
     <code.declaration><![CDATA[
 
-      //#define DEBUGF LogTextMessage
-      #define DEBUGF(...) {}
+      #define DEBUGF LogTextMessage
+      //#define DEBUGF(...) {}
 
-      // Performance as of 13.12.2016 00:36
-      // Optimized for space: 1144 bytes, < 6.8% DSP
-      // Optimized for speed: 1640 bytes, < 6.0% (1720 bytes, < 6.0% DSP with UNROLL_PITCH)
-      // Unroll pitch gains less than 0.1% DSP at the expense of 80 bytes, so not much use.
+      // Performance as of 18.12.2016 01:48
+      // Worst case, algorithn 2,3,4
+      // Optimized for space
+      //    volume scalig on  :   7.0%
+      //    volume scalig off :   5.8%
+      // Optimized for speed:
+      //    volume scalig on  :   6.7%
+      //    volume scalig off :   5.5%
 
       #if attr_optimize == 0
         // ..no unrolling...
       #elif attr_optimize == 1
-        //#define UNROLL_PITCH
         #define UNROLL_OPERATORS
       #elif attr_optimize == 2
-        //#define UNROLL_PITCH
-        #define UNROLL_OPERATORS
+        #define UNROLL_PITCH
         #define UNROLL_MODULATORS
+        #define UNROLL_OPERATORS
       #endif
 
-      int32_t  outputs[N_OPERATORS];
-      int32_t  outputs_tmp[N_OPERATORS];
-      uint32_t phase[N_OPERATORS];
-      uint32_t index[N_OPERATORS];
-      uint32_t amp[N_OPERATORS];
-      int32_t  freq[N_OPERATORS];
+      #if attr_volscaling==1
+        #define USE_VOL_SCALING_A
+      #elif attr_volscaling==2
+        #define USE_VOL_SCALING_B
+      #endif
+
+      int32_t  outputs[FM4OP_N_OPERATORS];
+      int32_t  outputs_tmp[FM4OP_N_OPERATORS];
+      uint32_t phase[FM4OP_N_OPERATORS];
+      uint32_t index[FM4OP_N_OPERATORS];
+      uint32_t amp[FM4OP_N_OPERATORS];
+      int32_t  freq[FM4OP_N_OPERATORS];
 #ifndef UNROLL_PITCH
-      int32_t  ratio[N_OPERATORS];
+      int32_t  ratio[FM4OP_N_OPERATORS];
 #endif
 
     ]]></code.declaration>
     <code.init><![CDATA[
 
-      #ifdef UNROLL_OPERATORS
+      #ifdef UNROLL_PITCH
         DEBUGF("UNROLL_PITCH");
       #endif
       #ifdef UNROLL_OPERATORS
@@ -86,13 +107,16 @@
       #ifdef UNROLL_MODULATORS
         DEBUGF("UNROLL_MODULATORS");
       #endif
+      #ifdef USE_VOL_SCALING_A
+        DEBUGF("USE_VOL_SCALING_A");
+      #endif
+      #ifdef USE_VOL_SCALING_B
+        DEBUGF("USE_VOL_SCALING_B");
+      #endif
 
-      for( int op = 0; op < N_OPERATORS; op++ )
+      for( int op = 0; op < FM4OP_N_OPERATORS; op++ )
         {
           phase[op] = 0;
-          index[op] = 0;
-          amp[op]   = 0;
-          freq[op]  = 0;
         }
 
     ]]></code.init>
@@ -116,11 +140,12 @@
       ratio[1] = param_op2r;
       ratio[2] = param_op3r;
       ratio[3] = param_op4r;
-      for( int op = 0; op < N_OPERATORS; op++ )
+      for( int op = 0; op < FM4OP_N_OPERATORS; op++ )
         {
           MTOFEXTENDED( pitch + ratio[op], freq[op] );
         }
 #else
+      // Unroll pitch gains less than 0.1% DSP at the expense of 80 bytes, so not much use.
       MTOFEXTENDED( pitch + param_op1r, freq[0] );
       MTOFEXTENDED( pitch + param_op2r, freq[1] );
       MTOFEXTENDED( pitch + param_op3r, freq[2] );
@@ -136,26 +161,16 @@
 
 #ifdef UNROLL_MODULATORS
   #define OPERATOR_FM( op ) \
-      /* Saves setting up the loop, but not measureably faster in practice... */
+      /* Saves setting up the loop, but not measureably faster in practice... */ \
       mod = 0; \
-      operator_index = fm4op_algorithms[alg][op][0]; \
+      operator_index = fm4op_algorithms[alg].mod[op][0]; \
       if( operator_index >= 0 ) \
         { \
           mod += outputs[ operator_index ]; \
-          operator_index = fm4op_algorithms[alg][op][1]; \
+          operator_index = fm4op_algorithms[alg].mod[op][1]; \
           if( operator_index >= 0 ) \
             { \
               mod += outputs[ operator_index ]; \
-              operator_index = fm4op_algorithms[alg][op][2]; \
-              if( operator_index >= 0 ) \
-                { \
-                  mod += outputs[ operator_index ]; \
-                  operator_index = fm4op_algorithms[alg][op][3]; \
-                  if( operator_index >= 0 ) \
-                    { \
-                      mod += outputs[ operator_index ]; \
-                    } \
-                } \
             } \
         } \
       mod = ___SMMUL( index[op], mod ); \
@@ -165,9 +180,9 @@
 #else
   #define OPERATOR_FM( op ) \
       mod = 0; \
-      for( int input = 0; input < N_OPERATORS; input++ ) \
+      for( int input = 0; input < FM4OP_N_MODULATORS; input++ ) \
         { \
-          operator_index = fm4op_algorithms[alg][op][input]; \
+          operator_index = fm4op_algorithms[alg].mod[op][input]; \
           if( operator_index < 0 ) \
             { \
               break; \
@@ -181,7 +196,7 @@
 #endif
 
 #ifndef UNROLL_OPERATORS
-      for( int op = 0; op < N_OPERATORS; op++ )
+      for( int op = 0; op < FM4OP_N_OPERATORS; op++ )
         {
           OPERATOR_FM( op );
         }
@@ -192,19 +207,27 @@
       OPERATOR_FM( 3 );
 #endif
 
+#if defined(USE_VOL_SCALING_A) | defined(USE_VOL_SCALING_B)
+  #define IFDEF_USE_VOL_SCALING(X) X
+#else
+  #define IFDEF_USE_VOL_SCALING(X)
+#endif
+
 #define OPERATOR_MIX( op ) \
       outputs[op] = outputs_tmp[op]; \
-      operator_index = fm4op_algorithms[alg][N_OPERATORS][op]; \
+      operator_index = fm4op_algorithms[alg].out[op]; \
       if( operator_index >= 0 ) \
         { \
           out += outputs[ operator_index ]; \
-          nch++; \
+          IFDEF_USE_VOL_SCALING(n_operators++;) \
         }
 
-      int32_t vol_index = -1;
+#if defined(USE_VOL_SCALING_A) | defined(USE_VOL_SCALING_B)
+      int32_t n_operators = 0;
+#endif
       out = 0;
 #ifndef UNROLL_OPERATORS
-      for( int op = 0; op < N_OPERATORS; op++ )
+      for( int op = 0; op < FM4OP_N_OPERATORS; op++ )
         {
           OPERATOR_MIX( op );
         }
@@ -214,8 +237,13 @@
       OPERATOR_MIX( 2 );
       OPERATOR_MIX( 3 );
 #endif
-      outlet_out = ___SMMUL( fm_volscaling[ vol_index ], out<<1 );
-      //outlet_out = __SSAT( out, 28 );
+#if defined(USE_VOL_SCALING_A)
+      outlet_out = ___SMMUL( fm4op_volscaling_A[ n_operators ], out<<1 );
+#elif defined(USE_VOL_SCALING_B)
+      outlet_out = ___SMMUL( fm4op_volscaling_B[ n_operators ], out<<1 );
+#else
+      outlet_out = out;
+#endif
 
     ]]></code.srate>
   </obj.normal>
