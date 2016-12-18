@@ -1,0 +1,273 @@
+<objdefs appVersion="1.0.11">
+  <obj.normal id="fm6op" uuid="ac65982910fe30a5bwca2a267f7751d3ee7111e2">
+    <sDescription>FM voice, 6 operators</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <includes>
+      <include>./fm6op.h</include>
+    </includes>
+    <inlets>
+      <frac32.bipolar       name="pitch" description="Pitch input"/>
+      <frac32.positive      name="op1a"  description="Operator 1 amplitude"/>
+      <frac32.positive      name="op2a"  description="Operator 2 amplitude"/>
+      <frac32.positive      name="op3a"  description="Operator 3 amplitude"/>
+      <frac32.positive      name="op4a"  description="Operator 4 amplitude"/>
+      <frac32.positive      name="op5a"  description="Operator 5 amplitude"/>
+      <frac32.positive      name="op6a"  description="Operator 6 amplitude"/>
+    </inlets>
+    <outlets>
+      <frac32buffer.bipolar name="out"  description="Output"/>
+    </outlets>
+    <params>
+      <frac32.s.map.pitch name="pitch" noLabel="false" description="Pitch bias"/>
+      <frac32.s.map.pitch name="op1r"  noLabel="false" description="Operator 1 ratio"/>
+      <frac32.s.map.pitch name="op2r"  noLabel="false" description="Operator 2 ratio"/>
+      <frac32.s.map.pitch name="op3r"  noLabel="false" description="Operator 3 ratio"/>
+      <frac32.s.map.pitch name="op4r"  noLabel="false" description="Operator 4 ratio"/>
+      <frac32.s.map.pitch name="op5r"  noLabel="false" description="Operator 5 ratio"/>
+      <frac32.s.map.pitch name="op6r"  noLabel="false" description="Operator 6 ratio"/>
+      <frac32.u.map.gain  name="op1i"  noLabel="false" description="Operator 1 index"/>
+      <frac32.u.map.gain  name="op2i"  noLabel="false" description="Operator 2 index"/>
+      <frac32.u.map.gain  name="op3i"  noLabel="false" description="Operator 3 index"/>
+      <frac32.u.map.gain  name="op4i"  noLabel="false" description="Operator 4 index"/>
+      <frac32.u.map.gain  name="op5i"  noLabel="false" description="Operator 5 index"/>
+      <frac32.u.map.gain  name="op6i"  noLabel="false" description="Operator 6 index"/>
+      <int32 name="algorithm" noLabel="false">
+         <MinValue i="1"/>
+         <MaxValue i="32"/>
+      </int32>
+    </params>
+    <attribs>
+      <combo name="volscaling">
+        <MenuEntries>
+          <string>Type A</string>
+          <string>Type B</string>
+          <string>Off</string>
+        </MenuEntries>
+        <CEntries>
+          <string>1</string>
+          <string>2</string>
+          <string>0</string>
+        </CEntries>
+      </combo>
+      <combo name="optimize">
+        <MenuEntries>
+          <string>Space</string>
+          <string>Speed</string>
+        </MenuEntries>
+        <CEntries>
+          <string>0</string>
+          <string>1</string>
+        </CEntries>
+      </combo>
+    </attribs>
+    <code.declaration><![CDATA[
+
+      #define DEBUGF LogTextMessage
+      //#define DEBUGF(...) {}
+
+      #if attr_optimize == 0
+        // ..no unrolling...
+      #elif attr_optimize == 1
+        #define UNROLL_OPERATORS
+      #elif attr_optimize == 2
+        #define UNROLL_PITCH
+        #define UNROLL_MODULATORS
+        #define UNROLL_OPERATORS
+      #endif
+
+      // Performance as of 18.12.2016 02:25
+      // Worst case, algorithn 16,17,18
+      // Optimized for space
+      //    volume scalig on  :  12.125%
+      //    volume scalig off :  10.375%
+      // Optimized for speed:
+      //    volume scalig on  :  10.250%
+      //    volume scalig off :   9.375%
+
+      #if attr_volscaling==1
+        #define USE_VOL_SCALING_A
+      #elif attr_volscaling==2
+        #define USE_VOL_SCALING_B
+      #endif
+
+      int32_t  outputs[FM6OP_N_OPERATORS];
+      int32_t  outputs_tmp[FM6OP_N_OPERATORS];
+      uint32_t phase[FM6OP_N_OPERATORS];
+      uint32_t index[FM6OP_N_OPERATORS];
+      uint32_t amp[FM6OP_N_OPERATORS];
+      int32_t  freq[FM6OP_N_OPERATORS];
+#ifndef UNROLL_PITCH
+      int32_t  ratio[FM6OP_N_OPERATORS];
+#endif
+
+    ]]></code.declaration>
+    <code.init><![CDATA[
+
+      #ifdef UNROLL_PITCH
+        DEBUGF("UNROLL_PITCH");
+      #endif
+      #ifdef UNROLL_OPERATORS
+        DEBUGF("UNROLL_OPERATORS");
+      #endif
+      #ifdef UNROLL_MODULATORS
+        DEBUGF("UNROLL_MODULATORS");
+      #endif
+      #ifdef USE_VOL_SCALING_A
+        DEBUGF("USE_VOL_SCALING_A");
+      #endif
+      #ifdef USE_VOL_SCALING_B
+        DEBUGF("USE_VOL_SCALING_B");
+      #endif
+
+      for( int op = 0; op < FM6OP_N_OPERATORS; op++ )
+        {
+          phase[op] = 0;
+        }
+
+    ]]></code.init>
+    <code.krate><![CDATA[
+
+      int32_t alg   = param_algorithm-1;
+      int32_t pitch = param_pitch + inlet_pitch;
+
+      index[0] = param_op1i;
+      index[1] = param_op2i;
+      index[2] = param_op3i;
+      index[3] = param_op4i;
+      index[4] = param_op5i;
+      index[5] = param_op6i;
+
+      amp[0]   = inlet_op1a<<1;
+      amp[1]   = inlet_op2a<<1;
+      amp[2]   = inlet_op3a<<1;
+      amp[3]   = inlet_op4a<<1;
+      amp[4]   = inlet_op5a<<1;
+      amp[5]   = inlet_op6a<<1;
+
+#ifndef UNROLL_PITCH
+      ratio[0] = param_op1r;
+      ratio[1] = param_op2r;
+      ratio[2] = param_op3r;
+      ratio[3] = param_op4r;
+      ratio[4] = param_op5r;
+      ratio[5] = param_op6r;
+      for( int op = 0; op < FM6OP_N_OPERATORS; op++ )
+        {
+          MTOFEXTENDED( pitch + ratio[op], freq[op] );
+        }
+#else
+      // Unroll pitch gains almost nothing
+      MTOFEXTENDED( pitch + param_op1r, freq[0] );
+      MTOFEXTENDED( pitch + param_op2r, freq[1] );
+      MTOFEXTENDED( pitch + param_op3r, freq[2] );
+      MTOFEXTENDED( pitch + param_op4r, freq[3] );
+      MTOFEXTENDED( pitch + param_op5r, freq[4] );
+      MTOFEXTENDED( pitch + param_op6r, freq[5] );
+#endif
+
+    ]]></code.krate>
+    <code.srate><![CDATA[
+
+      int32_t operator_index;
+      int32_t mod;
+      int32_t out;
+
+#ifdef UNROLL_MODULATORS
+  #define OPERATOR_FM( op ) \
+      /* Saves setting up the loop, but not measureably faster in practice... */ \
+      mod = 0; \
+      operator_index = fm6op_algorithms[alg].mod[op][0]; \
+      if( operator_index >= 0 ) \
+        { \
+          mod += outputs[ operator_index ]; \
+          operator_index = fm6op_algorithms[alg].mod[op][1]; \
+          if( operator_index >= 0 ) \
+            { \
+              mod += outputs[ operator_index ]; \
+              operator_index = fm6op_algorithms[alg].mod[op][2]; \
+              if( operator_index >= 0 ) \
+                { \
+                  mod += outputs[ operator_index ]; \
+                } \
+            } \
+        } \
+      mod = ___SMMUL( index[op], mod ); \
+      phase[op] += freq[op]; \
+      SINE2TINTERP( phase[op] + (mod<<6), out ) \
+      outputs_tmp[op] = ___SMMUL( amp[op], out );
+#else
+  #define OPERATOR_FM( op ) \
+      mod = 0; \
+      for( int input = 0; input < FM6OP_N_MODULATORS; input++ ) \
+        { \
+          operator_index = fm6op_algorithms[alg].mod[op][input]; \
+          if( operator_index < 0 ) \
+            { \
+              break; \
+            } \
+          mod += outputs[ operator_index ]; \
+        } \
+      mod = ___SMMUL( index[op], mod ); \
+      phase[op] += freq[op]; \
+      SINE2TINTERP( phase[op] + (mod<<6), out ) /* (mod<<6) is the largest index that doesn't go bad */ \
+      outputs_tmp[op] = ___SMMUL( amp[op], out );
+#endif
+
+#ifndef UNROLL_OPERATORS
+      for( int op = 0; op < FM6OP_N_OPERATORS; op++ )
+        {
+          OPERATOR_FM( op );
+        }
+#else
+      OPERATOR_FM( 0 );
+      OPERATOR_FM( 1 );
+      OPERATOR_FM( 2 );
+      OPERATOR_FM( 3 );
+      OPERATOR_FM( 4 );
+      OPERATOR_FM( 5 );
+#endif
+
+#if defined(USE_VOL_SCALING_A) | defined(USE_VOL_SCALING_B)
+  #define IFDEF_USE_VOL_SCALING(X) X
+#else
+  #define IFDEF_USE_VOL_SCALING(X)
+#endif
+
+#define OPERATOR_MIX( op ) \
+      outputs[op] = outputs_tmp[op]; \
+      operator_index = fm6op_algorithms[alg].out[op]; \
+      if( operator_index >= 0 ) \
+        { \
+          out += outputs[ operator_index ]; \
+          IFDEF_USE_VOL_SCALING(n_operators++;) \
+        }
+
+#if defined(USE_VOL_SCALING_A) | defined(USE_VOL_SCALING_B)
+      int32_t n_operators = 0;
+#endif
+      out = 0;
+#ifndef UNROLL_OPERATORS
+      for( int op = 0; op < FM6OP_N_OPERATORS; op++ )
+        {
+          OPERATOR_MIX( op );
+        }
+#else
+      OPERATOR_MIX( 0 );
+      OPERATOR_MIX( 1 );
+      OPERATOR_MIX( 2 );
+      OPERATOR_MIX( 3 );
+      OPERATOR_MIX( 4 );
+      OPERATOR_MIX( 5 );
+#endif
+#if defined(USE_VOL_SCALING_A)
+      outlet_out = ___SMMUL( fm6op_volscaling_A[ n_operators ], out<<1 );
+#elif defined(USE_VOL_SCALING_B)
+      outlet_out = ___SMMUL( fm6op_volscaling_B[ n_operators ], out<<1 );
+#else
+      outlet_out = out;
+#endif
+
+    ]]></code.srate>
+  </obj.normal>
+</objdefs>
