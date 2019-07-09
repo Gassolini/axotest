@@ -1,0 +1,250 @@
+<objdefs appVersion="1.0.9">
+  <obj.normal id="clock_tx_test" uuid="92a7e23a28b3aab1201291ba35b1f49ec6b4c1ce">
+    <sDescription>MIDI tempo sync tester</sDescription>
+    <author>Are Leistad</author>
+    <license>BSD</license>
+    <inlets>
+
+      <bool32.rising name="reset" description="reset phase"/>
+
+    </inlets>
+    <outlets>
+
+      <bool32 name="square"   description="24 PPQ clock square"/>
+      <bool32 name="pulse"    description="24 PPQ clock pulse"/>
+      <bool32 name="divpulse" description="Divided down clock pulse"/>
+
+      <bool32 name="start" description="Start pulse"/>
+      <bool32 name="stop"  description="Stop pulse"/>
+      <bool32 name="cont"  description="Continue pulse"/>
+
+      <int32  name="step"  description="Step number"/>
+      <bool32 name="trig"  description="Step trigger"/>
+
+    </outlets>
+    <displays/>
+    <params>
+
+      <int32 name="bpm" noLabel="false">
+         <MinValue i="1"/>
+         <MaxValue i="500"/>
+      </int32>
+      <int32 name="tenths" noLabel="false">
+         <MinValue i="0"/>
+         <MaxValue i="9"/>
+      </int32>
+
+      <int32 name="clockdiv" noLabel="false">
+         <MinValue i="1"/>
+         <MaxValue i="128"/>
+      </int32>
+
+      <int32 name="steps" noLabel="false">
+         <MinValue i="1"/>
+         <MaxValue i="128"/>
+      </int32>
+
+      <bool32.mom name="start"/>
+      <bool32.mom name="stop"/>
+      <bool32.mom name="continue"/>
+
+      <bool32.tgl name="clockinhibit" description="Stops the clock on the Stop command"/>
+
+    </params>
+    <attribs>
+      <combo name="device">
+        <MenuEntries>
+          <string>din</string>
+          <string>usb host port 1</string>
+          <string>usb host port 2</string>
+          <string>usb host port 3</string>
+          <string>usb host port 4</string>
+          <string>internal port 1</string>
+          <string>internal port 2</string>
+          <string>usb device port 1</string>
+        </MenuEntries>
+        <CEntries>
+          <string>MIDI_DEVICE_DIN, 1</string>
+          <string>MIDI_DEVICE_USB_HOST, 1</string>
+          <string>MIDI_DEVICE_USB_HOST, 2</string>
+          <string>MIDI_DEVICE_USB_HOST, 3</string>
+          <string>MIDI_DEVICE_USB_HOST, 4</string>
+          <string>MIDI_DEVICE_INTERNAL, 1</string>
+          <string>MIDI_DEVICE_INTERNAL, 2</string>
+          <string>MIDI_DEVICE_USB_DEVICE, 1</string>
+        </CEntries>
+      </combo>
+    </attribs>
+    <code.declaration><![CDATA[
+
+      //#define DEBUGF LogTextMessage
+      #define DEBUGF(...) {}
+
+      // Momentary commands
+      uint32_t command_start;
+      uint32_t command_stop;
+      uint32_t command_continue;
+      uint32_t old_start;
+      uint32_t old_stop;
+      uint32_t old_continue;
+
+      // Status
+      uint32_t status_running;
+
+      // Clock
+      int32_t   clock_phase;
+      uint32_t  old_square;
+      uint32_t  clock_24ppq;
+
+      // Clock divider
+      uint32_t  clock_count;
+      uint32_t  clock_divpulse;
+
+      // Step sequencer
+      uint32_t  step_count;
+
+
+    ]]></code.declaration>
+    <code.init><![CDATA[
+
+      // Momentary commands
+      command_start    = 0;
+      command_stop     = 0;
+      command_continue = 0;
+      old_start        = 0;
+      old_stop         = 0;
+      old_continue     = 0;
+
+      // Status
+      status_running   = 0;
+
+      // Clock
+      clock_phase = 0;
+      old_square  = 0;
+      clock_24ppq = 0;
+
+      // Clock divider
+      clock_count    = 0;
+      clock_divpulse = 0;
+
+      // Step sequencer
+      step_count    = 0;
+
+    ]]></code.init>
+    <code.krate><![CDATA[
+
+      // MIDI reltime spec:
+      // http://midi.teragonaudio.com/tech/midispec/seq.htm
+
+      // Commands
+
+      command_start    = 0;
+      command_stop     = 0;
+      command_continue = 0;
+
+      if( param_start && !old_start )
+        {
+          command_start  = 1;
+          status_running = 1;
+          clock_count    = param_clockdiv; // arm playback on downbeat (next clock)
+          step_count     = param_steps;
+        }
+
+      if( param_stop  && !old_stop )
+        {
+          command_stop   = 1;
+          status_running = 0;
+        }
+
+      if( param_continue && !old_continue && !status_running )
+        {
+          command_continue = 1;
+          status_running   = 1;
+        }
+
+      old_start       = param_start;
+      old_stop        = param_stop;
+      old_continue    = param_continue;
+
+      outlet_start    = command_start;
+      outlet_stop     = command_stop;
+      outlet_cont     = command_continue;
+
+      // Clock, square and pulse
+
+      double pinc = (64.0f * (double)(1 << 30) / SAMPLERATE) / 60 * 24 * (param_bpm + (param_tenths/10.0f)) ;
+      int32_t phase_increment = (uint32_t) (pinc + 0.5f);
+      clock_phase += phase_increment;
+      outlet_square = (clock_phase>0)?1:0;
+
+      clock_24ppq = 0;
+      if( outlet_square && !old_square )
+        {
+          clock_24ppq = 1;
+        }
+      old_square   = outlet_square;
+      outlet_pulse = clock_24ppq;
+
+     // Clock inhibit
+
+     if( param_clockinhibit && !status_running )
+       {
+         clock_phase   = 0;
+         clock_24ppq   = 0;
+         outlet_pulse  = 0;
+         outlet_square = 0;
+       }
+
+      // Clock divider
+
+      clock_divpulse = 0;
+      if( clock_24ppq )
+        {
+          if( ++clock_count >= param_clockdiv )
+            {
+              clock_count = 0;
+              clock_divpulse  = 1;
+            }
+        }
+      outlet_divpulse = clock_divpulse;
+
+      // Step sequencer driver
+
+      outlet_trig = 0;
+      if( status_running && clock_divpulse )
+        {
+          if( ++step_count >= param_steps )
+            {
+              step_count = 0;
+            }
+          outlet_trig = 1;
+        }
+      outlet_step = step_count % param_steps;
+
+      // MIDI clock messages
+
+      if( command_start )
+        {
+          MidiSend1( (midi_device_t) attr_device, MIDI_START );
+        }
+
+      if( command_stop )
+        {
+          MidiSend1( (midi_device_t) attr_device, MIDI_STOP );
+        }
+
+      if( command_continue )
+        {
+          MidiSend1( (midi_device_t) attr_device, MIDI_CONTINUE );
+        }
+
+      if( clock_24ppq )
+        {
+          MidiSend1( (midi_device_t) attr_device, MIDI_TIMING_CLOCK ) ;
+        }
+
+    ]]></code.krate>
+    <code.midihandler><![CDATA[
+    ]]></code.midihandler>
+  </obj.normal>
+</objdefs>
